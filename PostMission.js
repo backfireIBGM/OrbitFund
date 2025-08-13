@@ -1,82 +1,117 @@
-// Multi-step form functionality
-let currentStep = 1;
-const totalSteps = 4;
+// PostMission.js
+// This file is NOW ONLY for multi-step form navigation.
+// The actual form submission is handled by the browser directly due to the HTML action attribute.
 
-function showStep(step) {
+// --- FORM ELEMENTS ---
+// We only need references for navigation logic now.
+const missionForm = document.getElementById('missionForm'); // Not directly used for fetch anymore
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitBtn = document.getElementById('submitBtn');
+const formSections = document.querySelectorAll('.form-section');
+const steps = document.querySelectorAll('.step');
+
+// --- WIZARD STATE ---
+let currentStep = 1;
+const totalSteps = formSections.length;
+
+// --- FUNCTION TO SHOW SPECIFIC STEP ---
+function showStep(stepNumber) {
     // Hide all sections
-    for (let i = 1; i <= totalSteps; i++) {
-        document.getElementById(`section${i}`).style.display = 'none';
-        document.querySelector(`.step:nth-child(${i})`).classList.remove('active');
+    formSections.forEach(section => {
+        section.classList.remove('active');
+    });
+    // Show the target section
+    const targetSection = document.getElementById(`section${stepNumber}`);
+    if (targetSection) {
+        targetSection.classList.add('active');
     }
+
+    // Update progress indicators
+    steps.forEach((step, index) => {
+        step.classList.toggle('active', index + 1 === stepNumber);
+    });
+
+    // Update button visibility
+    prevBtn.style.display = stepNumber > 1 ? 'block' : 'none';
+    nextBtn.style.display = stepNumber < totalSteps ? 'block' : 'none';
+    submitBtn.style.display = stepNumber === totalSteps ? 'block' : 'none';
     
-    // Show current section
-    document.getElementById(`section${step}`).style.display = 'block';
-    document.querySelector(`.step:nth-child(${step})`).classList.add('active');
-    
-    // Update navigation buttons
-    document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
-    document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'block';
-    document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
+    // Ensure Next button is hidden when Submit button is shown
+    if (stepNumber === totalSteps) {
+        nextBtn.style.display = 'none';
+    }
 }
 
-// Next button
-document.getElementById('nextBtn').addEventListener('click', () => {
-    if (currentStep < totalSteps) {
-        currentStep++;
-        showStep(currentStep);
-    }
-});
+// --- NAVIGATION HANDLERS ---
+function handleNextStep() {
+    const currentSection = document.getElementById(`section${currentStep}`);
+    const inputs = currentSection.querySelectorAll('input, textarea, select');
+    let isValid = true;
 
-// Previous button
-document.getElementById('prevBtn').addEventListener('click', () => {
+    // Simple validation for required fields in the current section
+    inputs.forEach(input => {
+        // Check for empty required text fields, and validity for number/date inputs
+        if (input.hasAttribute('required') && !input.value.trim()) {
+            isValid = false;
+            input.reportValidity(); // Shows browser's native validation message
+            input.focus(); // Tries to focus the invalid element
+            return; // Stop checking further inputs in this section
+        }
+        // Additional check for number/date types if they have min/max constraints
+        if (input.type === 'number' && input.checkValidity && !input.checkValidity()) {
+             isValid = false;
+             input.reportValidity();
+             input.focus();
+             return;
+        }
+        if (input.type === 'date' && input.checkValidity && !input.checkValidity()) {
+             isValid = false;
+             input.reportValidity();
+             input.focus();
+             return;
+        }
+        // You'll need specific checks for file inputs if they were mandatory
+    });
+
+    if (currentStep === totalSteps) { // Special check for the "Review & Launch" step
+        const termsAgree = document.getElementById('termsAgree');
+        const accuracyConfirm = document.getElementById('accuracyConfirm');
+        if (!termsAgree.checked || !accuracyConfirm.checked) {
+            isValid = false;
+            alert("Please agree to the Terms of Service and confirm accuracy."); // Or a better UI message
+            if (!termsAgree.checked) termsAgree.focus();
+            else accuracyConfirm.focus();
+        }
+    }
+
+
+    if (isValid) {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    } else {
+        // Keep the user on the current step if validation fails
+        console.warn("Validation failed for current step.");
+    }
+}
+
+function handlePrevStep() {
     if (currentStep > 1) {
         currentStep--;
         showStep(currentStep);
     }
-});
-
-function handleImageUpload(files) {
-    const inputElement = document.getElementById("input");
-    inputElement.addEventListener("change", handleFiles, false);
-    
-    function handleFiles() {
-        const fileList = this.files; /* now you can work with the file list */
-        console.log(fileList);
-    }
 }
 
-document.getElementById('missionForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent default form submission
-    
-    const formData = new FormData(this);
-    
-    fetch(this.action, {
-        method: this.method,
-        body: formData
-    })
-    .then(response => {
-        // --- THIS IS THE KEY CHANGE ---
-        // Instead of .json(), use .text() to read the response as plain text.
-        return response.text(); 
-    })
-    .then(data => {
-        // 'data' will now be the plain text string, e.g., "API is running"
-        console.log('API Response (Text):', data);
+// --- INITIALIZE WIZARD ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first step
+    showStep(currentStep);
 
-        // You can then check the content of the text response
-        if (data === "API is running") {
-            alert("Mission data submitted successfully!");
-            window.location.href = "index.html";
-        } else {
-            console.warn("Function returned an unexpected response:", data);
-            alert("Submission complete, but with an unexpected response.");
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("There was an error submitting the mission data. Please try again.");
-    });
+    // Add listeners for navigation buttons
+    prevBtn.addEventListener('click', handlePrevStep);
+    nextBtn.addEventListener('click', handleNextStep);
+
+    // *** REMOVED: No submit listener for fetch here anymore! The form itself submits via HTML 'action'. ***
 });
-
-// Initialize
-showStep(1);
