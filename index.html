@@ -3,22 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OrbitFund | Home</title>
+    <title>OrbitFund | Fund the Future of Space</title>
     <link rel="stylesheet" href="styleMain.css">
     <link rel="stylesheet" href="styleHome.css">
     <link rel="icon" type="image/x-icon" href="RocketRadarFavicon.ico">
 </head>
 <body class="home-page">
-<h1>OrbitFund</h1>
-<button class="btn-primary large" onclick="showCreateAccount()">Create Account</button>
-<button class="btn-primary large" onclick="showLogin()">Login</button>
-  <h1 class="hero-title">Fund the Future of Space</h1>
-  <p class="hero-subtitle">Support CubeSat missions that push the boundaries of space exploration, research, and technology</p>
-  <div class="hero-buttons">
-      <button class="btn-primary large" onclick="showMissions()">Explore Missions</button>
-      <button class="btn-outline large" onclick="showCreateMission()">Start Your Mission</button>
-      <a href="postMission.html" class="btn-primary">Launch Mission</a>
-  </div>
+    <!-- Navigation Header -->
+    <nav class="nav-header">
+        <div class="logo">OrbitFund</div>
+        <div class="nav-buttons">
+            <!-- This DIV will contain the Login/Sign Up buttons -->
+            <!-- Initially hidden, will be shown if user is NOT logged in -->
+            <div id="authButtons" style="display: flex; gap: 1rem;">
+                <a href="#" class="btn-nav" onclick="showLogin()">Login</a>
+                <a href="#" class="btn-nav" onclick="showCreateAccount()">Sign Up</a>
+            </div>
+
+            <!-- This DIV will contain the Welcome message and Logout button -->
+            <!-- Initially hidden, will be shown if user IS logged in -->
+            <div id="loggedInUserDisplay" style="display: none; align-items: center; gap: 1rem;">
+                <span id="usernameGreeting" style="color: white; font-weight: 600; font-size: 1.1rem;"></span>
+                <a href="#" class="btn-nav" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-container">
+        <h1 class="hero-title">Fund the Future of Space</h1>
+        <p class="hero-subtitle">
+            The first crowdfunding platform dedicated to CubeSat missions and rideshare payloads. Help make space accessible for everyone.
+        </p>
+        
+        <div class="hero-buttons">
+            <a href="#missions" class="btn-primary" onclick="showMissions()">🚀 Explore Missions</a>
+            <a href="postMission.html" class="btn-outline">💫 Launch Your Mission</a>
+        </div>
+
+        <!-- Mission Statement -->
+        <div class="mission-statement">
+            <h2>Why OrbitFund?</h2>
+            <p>Space shouldn't be limited to big corporations. We're building a platform where researchers, students, and innovators can fund their space missions through community support.</p>
+        </div>
+
+        <!-- Features Section 1 -->
+        <div class="features">
+            <div class="feature-card">
+                <span class="feature-icon">🛰️</span>
+                <h3>CubeSat Missions</h3>
+                <p>Fund innovative CubeSat projects from universities, startups, and research institutions pushing the boundaries of space technology.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🚀</span>
+                <h3>Rideshare Payloads</h3>
+                <p>Support cost-effective rideshare missions that make space more accessible for smaller organizations and experiments.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔬</span>
+                <h3>Scientific Research</h3>
+                <p>Back missions focused on climate monitoring, space weather, astronomy, and other critical scientific research areas.</p>
+            </div>
+        </div>
+
+        <!-- Added more content to make it scrollable -->
+        <div class="mission-statement" style="margin-top: 4rem;">
+            <h2>How It Works</h2>
+            <p><strong>For Project Creators:</strong> Easily submit your mission proposal, set funding goals, and connect with a global community of space enthusiasts.</p>
+            <p><strong>For Backers:</strong> Browse exciting CubeSat and payload projects, contribute to missions you believe in, and follow their journey to orbit!</p>
+        </div>
+
+        <!-- Features Section 2 (Duplicate for scrolling) -->
+        <div class="features" style="margin-top: 3rem;">
+            <div class="feature-card">
+                <span class="feature-icon">✨</span>
+                <h3>Community Powered</h3>
+                <p>Join a vibrant community of innovators, engineers, and enthusiasts shaping the future of space, one mission at a time.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">💸</span>
+                <h3>Transparent Funding</h3>
+                <p>Track progress and see exactly how your contributions are helping real-world space projects achieve their ambitious goals.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🌍</span>
+                <h3>Global Impact</h3>
+                <p>Support missions that contribute to scientific knowledge, address global challenges, and inspire the next generation of space explorers.</p>
+            </div>
+        </div>
+        
+        <div class="mission-statement" style="margin-top: 4rem; margin-bottom: 5rem;">
+            <h2>Ready for Launch?</h2>
+            <p>Whether you have a groundbreaking CubeSat idea or want to support a mission, OrbitFund is your platform for accelerating space innovation.</p>
+            <div class="hero-buttons" style="margin-top: 2rem; margin-bottom: 0;">
+                <a href="#missions" class="btn-primary" onclick="showMissions()">Explore Missions</a>
+                <a href="postMission.html" class="btn-outline">Launch Your Mission</a>
+            </div>
+        </div>
+
+    </div> <!-- End of hero-container -->
+
+    <script src="HomePage.js"></script>
 </body>
-<script src="HomePage.js"></script>
 </html>

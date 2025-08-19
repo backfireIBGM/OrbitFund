@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start Your Mission | OrbitFund</title>
+    <title>OrbitFund | Launch Your Mission</title>
     <link rel="stylesheet" href="styleMain.css">
     <link rel="stylesheet" href="stylePostMission.css">
     <link rel="icon" type="image/x-icon" href="RocketRadarFavicon.ico">
-    <style>
+     <style>
         /* Basic styles for step navigation */
         .form-section {
             display: none; /* Hide all sections by default */
@@ -16,6 +16,17 @@
             display: block !important; /* Show the active section */
         }
     </style>
+
+        <!-- IMMEDIATE REDIRECT SCRIPT FOR UNAUTHENTICATED USERS -->
+    <script>
+        // Check if user is logged in immediately
+        if (!localStorage.getItem('orbitFundToken')) {
+            alert("You must be logged in to access this page!");
+            window.location.replace("loginSignup.html?form=login"); // Use replace to prevent back navigation to this page
+        }
+    </script>
+    <!-- End IMMEDIATE REDIRECT SCRIPT -->
+     
 </head>
 <body>
     <a href="index.html" class="nav-back">← Back to Home</a>
@@ -34,9 +45,8 @@
             <div class="step" data-step="4"><span>Review & Launch</span></div>
         </div>
 
-        <!-- Directly submits to the API. JS handles navigation. -->
-        <form class="mission-form" id="missionForm" method="post" action="https://realorbitfundapp-aeh3hnbcf8dzf4dh.westus-01.azurewebsites.net/api/submission" enctype="multipart/form-data">
-        <!-- <form class="mission-form" id="missionForm" method="post" action="https://localhost:5001" enctype="multipart/form-data"> -->
+        <!-- REMOVED THE 'action' ATTRIBUTE -->
+        <form class="mission-form" id="missionForm" method="post" enctype="multipart/form-data">
             
             <!-- Mission Details Section (initially active) -->
             <div class="form-section active" id="section1">
@@ -86,7 +96,7 @@
             </div>
         </form>
     </div>
-    <!-- PostMission.js will only handle navigation -->
+    <!-- PostMission.js will handle submission and navigation logic -->
     <script src="PostMission.js"></script>
 </body>
 </html>

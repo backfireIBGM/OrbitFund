@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrbitFund | Login / Sign Up</title>
+    <link rel="stylesheet" href="styleMain.css">
+    <link rel="stylesheet" href="styleLoginSignup.css">
+    <link rel="icon" type="image/x-icon" href="RocketRadarFavicon.ico">
+</head>
+<body class="login-signup-page">
+    <a href="index.html" class="nav-back">← Back to Home</a>
+
+    <div class="auth-container">
+        <div class="auth-toggle">
+            <button id="showLoginBtn" class="toggle-btn active">Login</button>
+            <button id="showSignupBtn" class="toggle-btn">Sign Up</button>
+        </div>
+
+        <!-- Login Form Section -->
+        <div id="loginSection" class="auth-section active">
+            <h2>Welcome Back, Astronaut!</h2>
+            <p>Log in to access your missions and funding opportunities.</p>
+            <form id="loginForm" action="#" method="post">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="your@email.com" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full-width">Login to Orbit</button>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </form>
+        </div>
+
+        <!-- Sign Up Form Section -->
+        <div id="signupSection" class="auth-section">
+            <h2>Join the Orbit!</h2>
+            <p>Create your account and launch into space funding.</p>
+            <form id="signupForm" action="#" method="post">
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" name="username" placeholder="Choose a cosmic name" required autocomplete="new-username">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" name="email" placeholder="your@email.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="password" placeholder="••••••••" required autocomplete="new-password">
+                    <small>Minimum 8 characters, including a number and a symbol.</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required autocomplete="new-password">
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="termsAgreeSignup" name="termsAgree" required>
+                    <label for="termsAgreeSignup">I agree to the <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a> *</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full-width">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="loginSignup.js"></script>
+</body>
+</html>
