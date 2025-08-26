@@ -1,4 +1,3 @@
-// Base URL for your API submissions (Ensure this is correct for your Azure backend)
 const API_BASE_URL = 'https://orbitfund-bzaafpeubnhdhaad.westus-01.azurewebsites.net/api';
 
 // --- FORM ELEMENTS ---
@@ -8,6 +7,17 @@ const nextBtn = document.getElementById('nextBtn');
 const submitBtn = document.getElementById('submitBtn');
 const formSections = document.querySelectorAll('.form-section');
 const steps = document.querySelectorAll('.step');
+
+// File input elements
+const missionImagesInput = document.getElementById('missionImages');
+const missionVideoInput = document.getElementById('missionVideo');
+const techDocsInput = document.getElementById('techDocs');
+
+// Preview areas
+const missionImagesPreview = document.getElementById('missionImagesPreview');
+const missionVideoPreview = document.getElementById('missionVideoPreview');
+const techDocsPreview = document.getElementById('techDocsPreview');
+
 
 // --- WIZARD STATE ---
 let currentStep = 1;
@@ -63,17 +73,14 @@ function validateCurrentStep() {
              input.focus();
              return false;
         }
-        // Add specific validation for file inputs if required
-        // e.g., if (input.type === 'file' && input.hasAttribute('required') && input.files.length === 0) { ... }
     }
 
-    // Special check for the "Review & Launch" step (currentStep === totalSteps)
     if (currentStep === totalSteps) { 
         const termsAgree = document.getElementById('termsAgree');
         const accuracyConfirm = document.getElementById('accuracyConfirm');
         if (!termsAgree.checked || !accuracyConfirm.checked) {
             isValid = false;
-            alert("Please agree to the Terms of Service and confirm accuracy."); // Or a better UI message
+            alert("Please agree to the Terms of Service and confirm accuracy.");
             if (!termsAgree.checked) termsAgree.focus();
             else accuracyConfirm.focus();
             return false;
@@ -98,6 +105,70 @@ function handlePrevStep() {
         currentStep--;
         showStep(currentStep);
     }
+}
+
+// --- FILE PREVIEW LOGIC ---
+function setupFilePreview(inputElement, previewArea) {
+    inputElement.addEventListener('change', (event) => {
+        previewArea.innerHTML = ''; // Clear previous previews
+        const files = event.target.files;
+
+        if (files.length === 0) {
+            return;
+        }
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('file-preview');
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewItem.appendChild(img);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = e.target.result;
+                    video.controls = false; // No controls for thumbnail
+                    video.muted = true;
+                    video.play().catch(() => {}); // Attempt to play for thumbnail
+                    previewItem.appendChild(video);
+                } else {
+                    const fileIcon = document.createElement('span');
+                    fileIcon.textContent = '📄'; // Generic document icon
+                    fileIcon.style.fontSize = '2em';
+                    fileIcon.style.display = 'block';
+                    fileIcon.style.textAlign = 'center';
+                    fileIcon.style.padding = '10px';
+                    previewItem.appendChild(fileIcon);
+                }
+                
+                const fileName = document.createElement('div');
+                fileName.classList.add('file-name');
+                fileName.textContent = file.name;
+                previewItem.appendChild(fileName);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('remove-btn');
+                removeBtn.textContent = 'X';
+                removeBtn.addEventListener('click', () => {
+                    // This is a simplistic remove. For actual form submission, 
+                    // you'd need to manage a separate DataTransfer object or re-create files.
+                    // For now, it just removes the visual preview.
+                    previewItem.remove();
+                    // If you need to clear the input for single files:
+                    if (!inputElement.multiple) {
+                        inputElement.value = '';
+                    }
+                });
+                previewItem.appendChild(removeBtn);
+
+                previewArea.appendChild(previewItem);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
 }
 
 // --- ASYNCHRONOUS FORM SUBMISSION HANDLER ---
@@ -131,39 +202,38 @@ async function handleSubmit(event) {
             body: formData,
         });
 
+        // Read the response body ONCE as text
+        const responseText = await response.text();
+        let responseData = responseText; // Default to text
+
+        // Try to parse it as JSON if it looks like JSON
+        try {
+            if (responseText && responseText.trim().startsWith('{') && responseText.trim().endsWith('}')) {
+                responseData = JSON.parse(responseText);
+            }
+        } catch (jsonParseError) {
+            console.warn("Response was not valid JSON, treating as plain text:", jsonParseError);
+        }
+
         if (response.ok) {
-            const result = await response.json();
-            console.log('Mission launched successfully:', result);
+            console.log('Mission launched successfully (status:', response.status, '):', responseData);
             alert('Your mission has been successfully launched and is awaiting review!');
-            
-            // --- THIS IS THE CRUCIAL LINE TO ENSURE REDIRECTION ---
-            window.location.href = 'index.html'; // Redirect to your home page (index.html)
-            // Or if you want to reset the form and stay on the page (less common for mission submit)
-            // missionForm.reset();
-            // currentStep = 1;
-            // showStep(currentStep);
+            window.location.href = 'index.html';
             
         } else {
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (e) {
-                errorData = await response.text();
-            }
-            
-            console.error('Mission launch failed:', response.status, errorData);
+            console.error('Mission launch failed (status:', response.status, '):', responseData);
             
             let errorMessage = "An error occurred.";
-            if (typeof errorData === 'object' && errorData !== null) {
-                errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
-                if (errorData.errors) {
+            if (typeof responseData === 'object' && responseData !== null) {
+                errorMessage = responseData.message || responseData.title || JSON.stringify(responseData);
+                if (responseData.errors) {
                     errorMessage += "\n\nDetails:";
-                    for (const key in errorData.errors) {
-                        errorMessage += `\n- ${key}: ${errorData.errors[key].join(', ')}`;
+                    for (const key in responseData.errors) {
+                        errorMessage += `\n- ${key}: ${responseData.errors[key].join(', ')}`;
                     }
                 }
-            } else if (typeof errorData === 'string') {
-                errorMessage = errorData.substring(0, 200) + (errorData.length > 200 ? "..." : "");
+            } else if (typeof responseData === 'string') {
+                errorMessage = responseData.substring(0, 200) + (responseData.length > 200 ? "..." : "");
             }
 
             alert(`Failed to launch mission: ${response.status} - ${errorMessage}`);
@@ -188,4 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add listener for form submission
     missionForm.addEventListener('submit', handleSubmit);
+
+    // Setup file previews for each input
+    setupFilePreview(missionImagesInput, missionImagesPreview);
+    setupFilePreview(missionVideoInput, missionVideoPreview);
+    setupFilePreview(techDocsInput, techDocsPreview);
 });
