@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrbitFund | Post Approval</title>
+    <link rel="stylesheet" href="styleMain.css">
+    <link rel="icon" type="image/x-icon" href="satellite.svg">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #58a6ff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #161b22;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #30363d;
+            background-color: #21262d;
+            color: #c9d1d9;
+            font-size: 1rem;
+        }
+        .mission-details div {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #30363d;
+        }
+        .mission-details div:last-child {
+            border-bottom: none;
+        }
+        .mission-details strong {
+            color: #8b949e;
+            display: inline-block;
+            min-width: 120px;
+        }
+        .media-list img, .media-list video {
+            max-width: 200px;
+            max-height: 150px;
+            margin: 5px;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .media-list a {
+            color: #58a6ff;
+            word-break: break-all;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .empty-state {
+            text-align: center;
+            color: #8b949e;
+            padding: 20px;
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="RocketRadarFavicon.ico">
+</head>
+<body>
+    <div class="container">
+        <h1>Mission Post Approval</h1>
+        <p>Review submitted missions and decide their fate. The power is yours!</p>
+
+        <div class="dropdown-section">
+            <label for="submissionIdSelect">Select Submission ID:</label>
+            <select id="submissionIdSelect">
+                <option value="">-- Select an ID --</option>
+            </select>
+        </div>
+
+        <hr style="border-color: #30363d; margin: 30px 0;">
+
+        <div id="missionDetailsDisplay">
+            <p class="empty-state">Select a submission ID from the dropdown to view its details.</p>
+        </div>
+    </div>
+
+    <script src="postApproval.js"></script>
+</body>
+</html>
