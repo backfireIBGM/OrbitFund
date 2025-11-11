@@ -2,17 +2,13 @@
 function showMissions() {
     console.log("Navigating to Missions...");
     alert("Exploring Missions! (Feature coming soon)");
-    // Or you can make this scroll to a section on the same page:
-    // document.getElementById('missions-section').scrollIntoView({ behavior: 'smooth' });
 }
 
 function showCreateMission() {
     const token = localStorage.getItem('orbitFundToken');
     if (token) {
-        // User is logged in, allow them to create a mission
         window.location.href = "postMission.html";
     } else {
-        // User is not logged in, redirect to login page
         alert("You must be logged in to launch a mission!");
         window.location.href = "loginSignup.html?form=login"; // Redirect to login page
     }
@@ -33,7 +29,7 @@ function updateAuthUI() {
     const usernameGreeting = document.getElementById('usernameGreeting');
 
     const token = localStorage.getItem('orbitFundToken');
-    const username = localStorage.getItem('orbitFundUsername'); // Assuming you save this on login
+    const username = localStorage.getItem('orbitFundUsername');
 
     if (token && username) {
         // User is logged in

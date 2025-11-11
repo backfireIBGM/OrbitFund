@@ -1,9 +1,8 @@
 .home-page {
-    /* Keep existing styles */
-    min-height: 100vh; /* This is correct, but let's ensure it's not overridden */
+    min-height: 100vh;
     display: flex; /* This is often the culprit for non-scrolling content */
     flex-direction: column;
-    justify-content: flex-start; /* Change from center to flex-start */
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     position: relative;
@@ -18,19 +17,15 @@ html, body {
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* ... (rest of your styleHome.css remains the same) ... */
-
-/* Adjust .hero-container if it's implicitly forcing a fixed height */
 .hero-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
     z-index: 1;
-    /* Remove any fixed heights or overflow: hidden if they exist and are not intended */
     width: 100%; /* Ensure it takes full width of parent */
     box-sizing: border-box; /* Include padding in width */
 }
-/* Animated background elements - now more subtle for contrast */
+
 .home-page::before {
     content: '';
     position: absolute;
@@ -39,9 +34,9 @@ html, body {
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%), /* Reduced opacity */
-        radial-gradient(circle at 80% 20%, rgba(123, 104, 238, 0.08) 0%, transparent 50%), /* Reduced opacity */
-        radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.03) 0%, transparent 50%); /* Reduced opacity */
+        radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(123, 104, 238, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.03) 0%, transparent 50%);
     animation: float 20s ease-in-out infinite;
     z-index: -1;
 }
@@ -281,7 +276,6 @@ html, body {
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.2); /* Subtle shadow */
 }
 
-/* Responsive Design (no changes needed here as it was structural) */
 @media (max-width: 768px) {
     .nav-header {
         flex-direction: column;

@@ -51,6 +51,7 @@
         .form-section.active {
             display: block !important; /* Show the active section */
         }
+
         /* Styles for file previews */
         .file-preview-area {
             display: flex;
