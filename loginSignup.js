@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginSection = document.getElementById('loginSection');
     const signupSection = document.getElementById('signupSection');
 
-    // Base URL for your API (adjust if your backend is on a different port/address)
-const API_BASE_URL = 'https://orbitfund-bzaafpeubnhdhaad.westus-01.azurewebsites.net/api';
+    const API_BASE_URL = 'http://localhost:3000/api';
 
     function showSection(sectionToShow) {
         // Hide all sections
@@ -52,7 +51,7 @@ const API_BASE_URL = 'https://orbitfund-bzaafpeubnhdhaad.westus-01.azurewebsites
         const password = document.getElementById('loginPassword').value;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/Users/login`, {
+            const response = await fetch(`${API_BASE_URL}/users/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +111,7 @@ const API_BASE_URL = 'https://orbitfund-bzaafpeubnhdhaad.westus-01.azurewebsites
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/Users/register`, {
+            const response = await fetch(`${API_BASE_URL}/users/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

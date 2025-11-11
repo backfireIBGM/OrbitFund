@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://orbitfund-bzaafpeubnhdhaad.westus-01.azurewebsites.net/api';
+const API_BASE_URL = 'http://localhost:3000/api';
 
 // --- FORM ELEMENTS ---
 const missionForm = document.getElementById('missionForm');
@@ -23,6 +23,15 @@ const techDocsPreview = document.getElementById('techDocsPreview');
 let currentStep = 1;
 const totalSteps = formSections.length;
 
+// --- Object to store all files selected for each input ---
+// Keys will be the input 'name' attributes (e.g., 'images', 'video', 'documents')
+// Values will be Sets to automatically handle duplicates and maintain order
+const collectedFiles = {
+    images: new Set(),
+    video: new Set(),
+    documents: new Set()
+};
+
 // --- FUNCTION TO SHOW SPECIFIC STEP ---
 function showStep(stepNumber) {
     // Hide all sections
@@ -42,12 +51,12 @@ function showStep(stepNumber) {
 
     // Update button visibility
     prevBtn.style.display = stepNumber > 1 ? 'block' : 'none';
-    nextBtn.style.display = stepNumber < totalSteps ? 'block' : 'block'; // Keep 'next' visible until last step
-    submitBtn.style.display = stepNumber === totalSteps ? 'block' : 'none';
-    
-    // Ensure Next button is hidden when Submit button is shown (redundant with line above but explicit)
-    if (stepNumber === totalSteps) {
+    nextBtn.style.display = stepNumber < totalSteps ? 'block' : 'block';
+    if (stepNumber === totalSteps) { // Ensure Next button is hidden when Submit button is shown
         nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+    } else {
+        submitBtn.style.display = 'none';
     }
 }
 
@@ -57,16 +66,13 @@ function validateCurrentStep() {
     const inputs = currentSection.querySelectorAll('input, textarea, select');
     let isValid = true;
 
-    // Simple validation for required fields in the current section
-    for (const input of inputs) { // Using for...of for early exit
-        // Check for empty required text fields, and validity for number/date inputs
+    for (const input of inputs) {
         if (input.hasAttribute('required') && !input.value.trim()) {
             isValid = false;
-            input.reportValidity(); // Shows browser's native validation message
-            input.focus(); // Tries to focus the invalid element
-            return false; // Stop checking further inputs in this section
+            input.reportValidity();
+            input.focus();
+            return false;
         }
-        // Additional check for number/date types if they have min/max constraints
         if ((input.type === 'number' || input.type === 'date') && input.checkValidity && !input.checkValidity()) {
              isValid = false;
              input.reportValidity();
@@ -75,7 +81,7 @@ function validateCurrentStep() {
         }
     }
 
-    if (currentStep === totalSteps) { 
+    if (currentStep === totalSteps) {
         const termsAgree = document.getElementById('termsAgree');
         const accuracyConfirm = document.getElementById('accuracyConfirm');
         if (!termsAgree.checked || !accuracyConfirm.checked) {
@@ -107,67 +113,79 @@ function handlePrevStep() {
     }
 }
 
-// --- FILE PREVIEW LOGIC ---
-function setupFilePreview(inputElement, previewArea) {
+// --- FILE PREVIEW AND COLLECTION LOGIC ---
+function setupFilePreview(inputElement, previewArea, fileCollectionSet) {
     inputElement.addEventListener('change', (event) => {
-        previewArea.innerHTML = ''; // Clear previous previews
         const files = event.target.files;
 
-        if (files.length === 0) {
-            return;
-        }
-
+        // Add new files to the collection
         Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const previewItem = document.createElement('div');
-                previewItem.classList.add('file-preview');
-
-                if (file.type.startsWith('image/')) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    previewItem.appendChild(img);
-                } else if (file.type.startsWith('video/')) {
-                    const video = document.createElement('video');
-                    video.src = e.target.result;
-                    video.controls = false; // No controls for thumbnail
-                    video.muted = true;
-                    video.play().catch(() => {}); // Attempt to play for thumbnail
-                    previewItem.appendChild(video);
-                } else {
-                    const fileIcon = document.createElement('span');
-                    fileIcon.textContent = '📄'; // Generic document icon
-                    fileIcon.style.fontSize = '2em';
-                    fileIcon.style.display = 'block';
-                    fileIcon.style.textAlign = 'center';
-                    fileIcon.style.padding = '10px';
-                    previewItem.appendChild(fileIcon);
-                }
-                
-                const fileName = document.createElement('div');
-                fileName.classList.add('file-name');
-                fileName.textContent = file.name;
-                previewItem.appendChild(fileName);
-
-                const removeBtn = document.createElement('button');
-                removeBtn.classList.add('remove-btn');
-                removeBtn.textContent = 'X';
-                removeBtn.addEventListener('click', () => {
-                    // This is a simplistic remove. For actual form submission, 
-                    // you'd need to manage a separate DataTransfer object or re-create files.
-                    // For now, it just removes the visual preview.
-                    previewItem.remove();
-                    // If you need to clear the input for single files:
-                    if (!inputElement.multiple) {
-                        inputElement.value = '';
-                    }
-                });
-                previewItem.appendChild(removeBtn);
-
-                previewArea.appendChild(previewItem);
-            };
-            reader.readAsDataURL(file);
+            // Assign a unique ID to each file object for easier removal from the Set
+            // This is important because File objects are not guaranteed to be referentially equal
+            // even if their content is the same, making Set.delete tricky without an identifier.
+            file._id = file.name + file.lastModified + file.size; // Simple unique ID
+            fileCollectionSet.add(file);
         });
+
+        // Clear the *input element's value* so new selections don't conflict,
+        // but files remain in our `collectedFiles` object.
+        inputElement.value = ''; // IMPORTANT: Clears the selection shown in the input box
+
+        updateFilePreviews(previewArea, fileCollectionSet, inputElement.name); // Pass input name for remove handling
+    });
+}
+
+function updateFilePreviews(previewArea, fileCollectionSet, inputName) {
+    previewArea.innerHTML = ''; // Clear previous previews
+
+    if (fileCollectionSet.size === 0) {
+        return;
+    }
+
+    fileCollectionSet.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const previewItem = document.createElement('div');
+            previewItem.classList.add('file-preview');
+
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                previewItem.appendChild(img);
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = e.target.result;
+                video.controls = false;
+                video.muted = true;
+                video.play().catch(() => {});
+                previewItem.appendChild(video);
+            } else { // Generic for documents (like PDF)
+                const fileIcon = document.createElement('span');
+                fileIcon.textContent = '📄';
+                fileIcon.style.fontSize = '2em';
+                fileIcon.style.display = 'block';
+                fileIcon.style.textAlign = 'center';
+                fileIcon.style.padding = '10px';
+                previewItem.appendChild(fileIcon);
+            }
+
+            const fileName = document.createElement('div');
+            fileName.classList.add('file-name');
+            fileName.textContent = file.name;
+            previewItem.appendChild(fileName);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.classList.add('remove-btn');
+            removeBtn.textContent = 'X';
+            removeBtn.addEventListener('click', () => {
+                fileCollectionSet.delete(file); // Remove from our collected set
+                updateFilePreviews(previewArea, fileCollectionSet, inputName); // Re-render previews
+            });
+            previewItem.appendChild(removeBtn);
+
+            previewArea.appendChild(previewItem);
+        };
+        reader.readAsDataURL(file);
     });
 }
 
@@ -180,7 +198,17 @@ async function handleSubmit(event) {
         return;
     }
 
-    const formData = new FormData(missionForm);
+    // --- NEW: Manually create FormData and append all collected files ---
+    const formData = new FormData(missionForm); // Collects all non-file inputs
+
+    // Append collected files from our Sets
+    for (const fileInputName in collectedFiles) {
+        collectedFiles[fileInputName].forEach(file => {
+            formData.append(fileInputName, file, file.name); // Append each file with its original name
+        });
+    }
+    // --- END NEW ---
+
     const method = missionForm.method;
 
     const token = localStorage.getItem('orbitFundToken');
@@ -194,19 +222,20 @@ async function handleSubmit(event) {
     submitBtn.disabled = true;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/Submission`, {
+        const response = await fetch(`${API_BASE_URL}/submission`, {
             method: method,
             headers: {
+                // IMPORTANT: Do NOT set Content-Type for FormData when uploading files.
+                // The browser sets it automatically, including the boundary.
+                // 'Content-Type': 'multipart/form-data' // <-- REMOVE THIS LINE IF YOU HAVE IT
                 'Authorization': `Bearer ${token}`
             },
-            body: formData,
+            body: formData, // FormData object handles its own content type
         });
 
-        // Read the response body ONCE as text
         const responseText = await response.text();
-        let responseData = responseText; // Default to text
+        let responseData = responseText;
 
-        // Try to parse it as JSON if it looks like JSON
         try {
             if (responseText && responseText.trim().startsWith('{') && responseText.trim().endsWith('}')) {
                 responseData = JSON.parse(responseText);
@@ -218,11 +247,11 @@ async function handleSubmit(event) {
         if (response.ok) {
             console.log('Mission launched successfully (status:', response.status, '):', responseData);
             alert('Your mission has been successfully launched and is awaiting review!');
-            window.location.href = 'index.html';
-            
+            // window.location.href = 'index.html';
+
         } else {
             console.error('Mission launch failed (status:', response.status, '):', responseData);
-            
+
             let errorMessage = "An error occurred.";
             if (typeof responseData === 'object' && responseData !== null) {
                 errorMessage = responseData.message || responseData.title || JSON.stringify(responseData);
@@ -249,18 +278,15 @@ async function handleSubmit(event) {
 
 // --- INITIALIZE WIZARD ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the first step
     showStep(currentStep);
 
-    // Add listeners for navigation buttons
     prevBtn.addEventListener('click', handlePrevStep);
     nextBtn.addEventListener('click', handleNextStep);
-
-    // Add listener for form submission
     missionForm.addEventListener('submit', handleSubmit);
 
-    // Setup file previews for each input
-    setupFilePreview(missionImagesInput, missionImagesPreview);
-    setupFilePreview(missionVideoInput, missionVideoPreview);
-    setupFilePreview(techDocsInput, techDocsPreview);
+    // Setup file previews and collection for each input
+    // Pass the corresponding Set from 'collectedFiles'
+    setupFilePreview(missionImagesInput, missionImagesPreview, collectedFiles.images);
+    setupFilePreview(missionVideoInput, missionVideoPreview, collectedFiles.video);
+    setupFilePreview(techDocsInput, techDocsPreview, collectedFiles.documents);
 });

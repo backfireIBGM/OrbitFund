@@ -1,12 +1,17 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const API_BASE_URL =
-        'https://orbitfund-bzaafpeubnhdhaad.westus-01.azurewebsites.net/api';
+    const API_BASE_URL = 'http://localhost:3000/api';
     const token = localStorage.getItem('orbitFundToken');
 
     const submissionIdSelect = document.getElementById('submissionIdSelect');
     const missionDetailsDisplay = document.getElementById(
         'missionDetailsDisplay'
     );
+
+    const approvalActionsDiv = document.getElementById('approvalActions');
+    const approveBtn = document.getElementById('approveBtn');
+    const rejectBtn = document.getElementById('rejectBtn');
+
+    let currentSubmissionId = null; // Store the ID of the currently displayed submission
 
     async function verifyAdmin() {
         if (!token) {
@@ -69,6 +74,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     submissionIdSelect.innerHTML =
                         '<option value="">-- No Pending Submissions --</option>';
                     missionDetailsDisplay.innerHTML = `<p class="empty-state">No pending missions to approve right now!</p>`;
+                    // Hide approval actions if no pending submissions
+                    if (approvalActionsDiv) approvalActionsDiv.style.display = 'none';
                 } else {
                     // Clear previous options except the default one
                     submissionIdSelect.innerHTML =
@@ -79,6 +86,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         option.textContent = `Submission ID: ${id}`;
                         submissionIdSelect.appendChild(option);
                     });
+                     // Re-select if current ID is still in the list, otherwise clear
+                    if (currentSubmissionId && ids.includes(parseInt(currentSubmissionId))) {
+                        submissionIdSelect.value = currentSubmissionId;
+                    } else {
+                        currentSubmissionId = null;
+                        submissionIdSelect.value = "";
+                        missionDetailsDisplay.innerHTML = `<p class="empty-state">Select a submission ID from the dropdown to view its details.</p>`;
+                        if (approvalActionsDiv) approvalActionsDiv.style.display = 'none';
+                    }
                 }
             } else {
                 console.error(
@@ -87,6 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await response.text()
                 );
                 missionDetailsDisplay.innerHTML = `<p class="empty-state" style="color: red;">Error loading pending submission IDs.</p>`;
+                if (approvalActionsDiv) approvalActionsDiv.style.display = 'none';
             }
         } catch (error) {
             console.error(
@@ -94,16 +111,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 error
             );
             missionDetailsDisplay.innerHTML = `<p class="empty-state" style="color: red;">Network error loading pending submission IDs.</p>`;
+            if (approvalActionsDiv) approvalActionsDiv.style.display = 'none';
         }
     }
 
     async function fetchSubmissionDetails(id) {
         if (!id) {
+            currentSubmissionId = null; // Clear the stored ID
             missionDetailsDisplay.innerHTML = `<p class="empty-state">Select a submission ID from the dropdown to view its details.</p>`;
+            if (approvalActionsDiv) approvalActionsDiv.style.display = 'none'; // Hide buttons
             return;
         }
 
+        currentSubmissionId = id; // Store the currently viewed ID
         missionDetailsDisplay.innerHTML = `<p class="empty-state">Loading details for ID ${id}...</p>`;
+        if (approvalActionsDiv) approvalActionsDiv.style.display = 'none'; // Hide buttons while loading
 
         try {
             const response = await fetch(`${API_BASE_URL}/Approval/${id}`, {
@@ -118,6 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const details = await response.json();
                 console.log('Fetched Submission Details:', details);
                 displaySubmissionDetails(details);
+                if (approvalActionsDiv) approvalActionsDiv.style.display = 'block'; // Show buttons after details load
             } else {
                 console.error(
                     'Failed to fetch submission details:',
@@ -125,6 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await response.text()
                 );
                 missionDetailsDisplay.innerHTML = `<p class="empty-state" style="color: red;">Error loading details for ID ${id}.</p>`;
+                if (approvalActionsDiv) approvalActionsDiv.style.display = 'none';
             }
         } catch (error) {
             console.error(
@@ -132,13 +156,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 error
             );
             missionDetailsDisplay.innerHTML = `<p class="empty-state" style="color: red;">Network error loading details for ID ${id}.</p>`;
+            if (approvalActionsDiv) approvalActionsDiv.style.display = 'none';
         }
     }
 
     function displaySubmissionDetails(details) {
         let html = '<div class="mission-details">';
 
-        function formatList(items) {
+        function formatList(items, type) { // Added 'type' argument for potential future differentiation
             if (!items || items.length === 0) return 'N/A';
             return `<div class="media-list">${items
                 .map((url) => {
@@ -148,11 +173,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             extension
                         )
                     ) {
-                        return `<img src="${url}" alt="Image">`;
+                        return `<img src="${url}" alt="${type} Image">`;
                     } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
                         return `<video controls src="${url}"></video>`;
                     } else {
-                        return `<a href="${url}" target="_blank">${url.split('/').pop()}</a>`;
+                        return `<a href="${url}" target="_blank">${url.split('/').pop() || 'Document'}</a>`;
                     }
                 })
                 .join('')}</div>`;
@@ -163,9 +188,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         html += `<div><strong>Status:</strong> ${
             details.status || 'Pending'
         }</div>`;
-        html += `<div><strong>Created At:</strong> ${new Date(
+        html += `<div><strong>Created At:</strong> ${
             details.createdAt
-        ).toLocaleString()}</div>`;
+                ? new Date(details.createdAt).toLocaleString()
+                : 'N/A'
+        }</div>`;
         html += `<div><strong>Description:</strong> ${
             details.description || 'N/A'
         }</div>`;
@@ -192,17 +219,79 @@ document.addEventListener('DOMContentLoaded', async () => {
             details.rewards || 'N/A'
         }</div>`;
         html += `<div><strong>Images:</strong> ${formatList(
-            details.imageUrls
+            details.imageUrls, 'image'
         )}</div>`;
         html += `<div><strong>Videos:</strong> ${formatList(
-            details.videoUrls
+            details.videoUrls, 'video'
         )}</div>`;
         html += `<div><strong>Documents:</strong> ${formatList(
-            details.documentUrls
+            details.documentUrls, 'document'
         )}</div>`;
 
         html += '</div>';
         missionDetailsDisplay.innerHTML = html;
+    }
+
+    async function updateSubmissionStatus(id, newStatus, adminNotes = null) {
+        if (!id) return;
+
+        // Confirmation for rejection
+        if (newStatus === 'Rejected') {
+            const confirmation = prompt(`Are you sure you want to REJECT submission ID ${id}? Please provide a brief reason:`);
+            if (confirmation === null || confirmation.trim() === '') {
+                alert('Rejection cancelled or no reason provided.');
+                return;
+            }
+            adminNotes = confirmation.trim();
+        } else if (newStatus === 'Approved') {
+            const confirmation = confirm(`Are you sure you want to APPROVE submission ID ${id}?`);
+            if (!confirmation) {
+                alert('Approval cancelled.');
+                return;
+            }
+        }
+
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/Approval/update-status`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: parseInt(id),
+                    newStatus: newStatus,
+                    adminNotes: adminNotes
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message);
+                // After successful update, re-fetch pending IDs to update the dropdown
+                await fetchPendingSubmissionIds();
+                // Clear the displayed details as this submission is no longer pending
+                missionDetailsDisplay.innerHTML = `<p class="empty-state">Select a submission ID from the dropdown to view its details.</p>`;
+                if (approvalActionsDiv) approvalActionsDiv.style.display = 'none'; // Hide buttons
+                currentSubmissionId = null; // Clear current selection
+                submissionIdSelect.value = ""; // Reset dropdown
+            } else {
+                const errorData = await response.json();
+                console.error(
+                    `Failed to ${newStatus.toLowerCase()} submission ${id}:`,
+                    response.status,
+                    errorData.message || errorData
+                );
+                alert(`Error: ${errorData.message || `Failed to ${newStatus.toLowerCase()} submission.`}`);
+            }
+        } catch (error) {
+            console.error(
+                `Network error updating status for submission ${id}:`,
+                error
+            );
+            alert(`Network error: Could not connect to the server to ${newStatus.toLowerCase()} submission.`);
+        }
     }
 
     const isAdmin = await verifyAdmin();
@@ -213,5 +302,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             const selectedId = event.target.value;
             fetchSubmissionDetails(selectedId);
         });
+
+        // Add event listeners for the new buttons if they exist
+        if (approveBtn) {
+            approveBtn.addEventListener('click', () => {
+                if (currentSubmissionId) {
+                    updateSubmissionStatus(currentSubmissionId, 'Approved');
+                } else {
+                    alert('Please select a submission to approve.');
+                }
+            });
+        }
+
+        if (rejectBtn) {
+            rejectBtn.addEventListener('click', () => {
+                if (currentSubmissionId) {
+                    updateSubmissionStatus(currentSubmissionId, 'Rejected');
+                } else {
+                    alert('Please select a submission to reject.');
+                }
+            });
+        }
     }
 });
