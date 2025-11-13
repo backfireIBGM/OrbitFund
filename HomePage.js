@@ -1,9 +1,3 @@
-// --- Navigation Helper Functions ---
-function showMissions() {
-    console.log("Navigating to Missions...");
-    alert("Exploring Missions! (Feature coming soon)");
-}
-
 function showCreateMission() {
     const token = localStorage.getItem('orbitFundToken');
     if (token) {

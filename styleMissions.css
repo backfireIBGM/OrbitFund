@@ -1,0 +1,4 @@
+body {
+  background-color: black; /* Using a named color */
+  -webkit-text-fill-color: rgb(230, 230, 230);
+}
