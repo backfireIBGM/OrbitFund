@@ -1,9 +1,34 @@
+// singleMission.js
+
 document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'http://localhost:3000/api';
+    const missionDetailsContainer = document.querySelector('.missions'); // Or your specific container for single mission details
 
-    async function fetchAndLogApprovedMissions() {
+    // --- CORRECTED: Extract mission ID from URL parameters ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const missionIdToFetch = urlParams.get('id'); // Get the 'id' parameter from the URL (e.g., singleMission.html?id=116)
+    // --- End Extraction ---
+
+    if (missionIdToFetch) {
+        await fetchAndLogApprovedMission(missionIdToFetch);
+    } else {
+        console.warn('--- No mission ID found in URL parameters. Cannot fetch single mission. ---');
+        if (missionDetailsContainer) {
+            missionDetailsContainer.innerHTML = '<p>No mission ID provided. Please go back to the missions list.</p>';
+        }
+    }
+
+    async function fetchAndLogApprovedMission(missionId) {
+        if (!missionId) {
+            console.error('--- No Mission ID provided for fetchAndLogApprovedMission ---');
+            return;
+        }
+
         try {
-            const response = await fetch(`${API_BASE_URL}/missions/approved-missions`, {
+            // This URL still uses 'missionId' (lowercase) because it's a dynamic part of the path,
+            // matching how typical REST APIs expect the ID in the URL.
+            // Your backend's route would typically be something like `/approved-missions/:id`.
+            const response = await fetch(`${API_BASE_URL}/approved-missions/${missionId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -11,53 +36,52 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok) {
-                const approvedMissions = await response.json();
-                handleResponse(approvedMissions)
+                const approvedMission = await response.json();
+                handleResponse(approvedMission);
             } else {
                 const errorText = await response.text();
                 console.error(
-                    '--- Failed to fetch approved missions (Response not OK) ---',
+                    '--- Failed to fetch approved mission (Response not OK) ---',
                     `Status: ${response.status}`,
                     `Error Text: ${errorText}`
                 );
+                if (missionDetailsContainer) {
+                    missionDetailsContainer.innerHTML = `<p>Error loading mission: ${response.status} - ${errorText}</p>`;
+                }
             }
         } catch (error) {
-            console.error('--- Network Error Fetching Approved Missions ---');
+            console.error('--- Network Error Fetching Approved Mission ---');
             console.error(error);
+            if (missionDetailsContainer) {
+                missionDetailsContainer.innerHTML = '<p>Network error while loading mission.</p>';
+            }
         }
     }
-
-    await fetchAndLogApprovedMissions();
 });
 
 function handleResponse(res) {
     console.log(res);
 
     const missionsDiv = document.querySelector('.missions');
+    if (!missionsDiv) {
+        console.error('Container element with class ".missions" not found in singleMission.html');
+        return;
+    }
+    missionsDiv.innerHTML = '';
 
-    if (Array.isArray(res) && res.length > 0) {
-        missionsDiv.innerHTML = ''; // Clear previous content!
-        res.forEach(mission => {
-            createMissionElement(mission, missionsDiv);
-        });
+    // --- CORRECTED: Check for res.Id (capital I) from the fetched mission object ---
+    if (res && typeof res === 'object' && res.Id) {
+        createMissionElement(res, missionsDiv);
     } else {
         emptyMissions(res, missionsDiv);
     }
 }
 
-
+// Ensure these helper functions are accessible in this file
+// (defined in this file, or imported if using modules)
 function createMissionElement(mission, containerElement) {
     const missionElement = document.createElement('div');
-    missionElement.className = 'mission-item';
-
-    missionElement.addEventListener('click', () => {
-        // --- CHANGED: Use mission.Id (capital I) ---
-        if (mission.Id) {
-            window.location.href = `singleMission.html?id=${mission.Id}`;
-        } else {
-            console.error('Mission ID is missing for this element, cannot navigate.');
-        }
-    });
+    missionElement.className = 'mission-item'; // Consider renaming to 'single-mission-detail' for clarity
 
     const imagesSectionHtml = createImageElementsHtml(mission);
 
@@ -83,7 +107,7 @@ function createMissionElement(mission, containerElement) {
     `;
 
     missionElement.innerHTML = `
-        <h3>${mission.title}</h3>
+        <h2>${mission.title}</h2>
         <p>Current Funding: <span class="funding-amount">$${mission.currentFunding.toLocaleString()}</span></p>
         <p>Goal: <span class="funding-amount">$${mission.fundingGoal.toLocaleString()}</span></p>
         ${progressAreaHtml}
@@ -108,50 +132,37 @@ function createImageElementsHtml(mission) {
     } else {
         imagesHtml = '<p>No images available.</p>';
     }
-    return imagesHtml; // Return the generated HTML
-}
-
-function emptyMissions(res, containerElement) {
-    const noMissionsMessage = document.createElement('p');
-    noMissionsMessage.textContent = 'No missions found or data format incorrect.';
-    missionsDiv.append(noMissionsMessage);
+    return imagesHtml;
 }
 
 function createMilestoneMarkersHtml(mission) {
     let milestonesHtml = '';
     if (mission.milestones && mission.milestones.length > 0 && mission.fundingGoal > 0) {
-        // Sort milestones by target_amount to ensure correct progression logic
         mission.milestones.sort((a, b) => a.target_amount - b.target_amount);
 
-        let foundNextMilestone = false; // Flag to identify the first unreached milestone
-        let milestoneLevel = 0; // Counter for alternating visual levels
+        let foundNextMilestone = false;
+        let milestoneLevel = 0;
 
-        mission.milestones.forEach((milestone, index) => {
+        mission.milestones.forEach((milestone) => {
             const milestonePercentage = (milestone.target_amount / mission.fundingGoal) * 100;
 
-            // Only render valid milestones within the 0-100% range of the funding goal
             if (milestonePercentage >= 0 && milestonePercentage <= 100) {
                 let milestoneStatusClass = '';
 
-                // Ensure numerical comparison by explicitly converting values
                 const currentFundingNum = parseFloat(mission.currentFunding);
                 const targetAmountNum = parseFloat(milestone.target_amount);
 
                 if (currentFundingNum >= targetAmountNum) {
-                    // Milestone has been passed
                     milestoneStatusClass = 'milestone-passed';
                 } else if (!foundNextMilestone) {
-                    // This is the first milestone that has not yet been reached
                     milestoneStatusClass = 'milestone-next';
-                    foundNextMilestone = true; // Set flag so subsequent ones are 'future'
+                    foundNextMilestone = true;
                 } else {
-                    // All other milestones that are not passed are considered future
                     milestoneStatusClass = 'milestone-future';
                 }
 
-                // Add alternating level class for visual styling (e.g., staggering vertical position)
                 const levelClass = `milestone-level-${milestoneLevel % 2}`;
-                milestoneLevel++; // Increment for the next milestone
+                milestoneLevel++;
 
                 milestonesHtml += `
                     <div class="milestone-marker ${milestoneStatusClass} ${levelClass}" style="left: ${milestonePercentage}%">
