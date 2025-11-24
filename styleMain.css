@@ -1,0 +1,8 @@
+/* --- Global Body / Page Styles --- */
+body {
+    background-color: #9dbdba; /* A slightly softer dark background than pure black */
+    color: #e0e0e0; /* Light gray for general text for readability */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A clear, modern font */
+    margin: 0;
+    padding: 20px;
+}

@@ -36,7 +36,7 @@ function handleResponse(res) {
     const missionsDiv = document.querySelector('.missions');
 
     if (Array.isArray(res) && res.length > 0) {
-        missionsDiv.innerHTML = ''; // Clear previous content!
+        missionsDiv.innerHTML = '';
         res.forEach(mission => {
             createMissionElement(mission, missionsDiv);
         });
@@ -45,13 +45,11 @@ function handleResponse(res) {
     }
 }
 
-
 function createMissionElement(mission, containerElement) {
     const missionElement = document.createElement('div');
     missionElement.className = 'mission-item';
 
     missionElement.addEventListener('click', () => {
-        // --- CHANGED: Use mission.Id (capital I) ---
         if (mission.Id) {
             window.location.href = `singleMission.html?id=${mission.Id}`;
         } else {
@@ -70,25 +68,19 @@ function createMissionElement(mission, containerElement) {
     }
     const formattedPercentage = fundingPercentage.toFixed(1);
 
-    const milestoneMarkersHtml = createMilestoneMarkersHtml(mission);
 
     const progressAreaHtml = `
         <div class="mission-progress-area">
             <div class="mission-progress-bar-container">
                 <div class="mission-progress-bar-fill" style="width: ${fundingPercentage}%"></div>
                 <span class="mission-progress-text">${formattedPercentage}% Funded</span>
-                ${milestoneMarkersHtml}
             </div>
         </div>
     `;
 
     missionElement.innerHTML = `
         <h3>${mission.title}</h3>
-        <p>Current Funding: <span class="funding-amount">$${mission.currentFunding.toLocaleString()}</span></p>
-        <p>Goal: <span class="funding-amount">$${mission.fundingGoal.toLocaleString()}</span></p>
         ${progressAreaHtml}
-        <p>Description: ${mission.description}</p>
-        <h4>Images:</h4>
         ${imagesSectionHtml}
     `;
 
@@ -98,75 +90,21 @@ function createMissionElement(mission, containerElement) {
 function createImageElementsHtml(mission) {
     let imagesHtml = '';
     if (mission.images && mission.images.length > 0) {
-        imagesHtml = '<div class="mission-images">';
-        mission.images.forEach(imageUrl => {
-            imagesHtml += `<div class="mission-image-wrapper">
-                               <img src="${imageUrl}" alt="${mission.title} image" loading="lazy">
-                           </div>`;
-        });
-        imagesHtml += '</div>';
+        imagesHtml = `
+        <div class="mission-images">
+        <div class="mission-image-wrapper">
+            <img src="${mission.images[0]}" alt="${mission.title} image" loading="lazy">
+        </div>
+        </div>
+        `;
     } else {
         imagesHtml = '<p>No images available.</p>';
     }
-    return imagesHtml; // Return the generated HTML
+    return imagesHtml;
 }
 
 function emptyMissions(res, containerElement) {
     const noMissionsMessage = document.createElement('p');
     noMissionsMessage.textContent = 'No missions found or data format incorrect.';
     missionsDiv.append(noMissionsMessage);
-}
-
-function createMilestoneMarkersHtml(mission) {
-    let milestonesHtml = '';
-    if (mission.milestones && mission.milestones.length > 0 && mission.fundingGoal > 0) {
-        // Sort milestones by target_amount to ensure correct progression logic
-        mission.milestones.sort((a, b) => a.target_amount - b.target_amount);
-
-        let foundNextMilestone = false; // Flag to identify the first unreached milestone
-        let milestoneLevel = 0; // Counter for alternating visual levels
-
-        mission.milestones.forEach((milestone, index) => {
-            const milestonePercentage = (milestone.target_amount / mission.fundingGoal) * 100;
-
-            // Only render valid milestones within the 0-100% range of the funding goal
-            if (milestonePercentage >= 0 && milestonePercentage <= 100) {
-                let milestoneStatusClass = '';
-
-                // Ensure numerical comparison by explicitly converting values
-                const currentFundingNum = parseFloat(mission.currentFunding);
-                const targetAmountNum = parseFloat(milestone.target_amount);
-
-                if (currentFundingNum >= targetAmountNum) {
-                    // Milestone has been passed
-                    milestoneStatusClass = 'milestone-passed';
-                } else if (!foundNextMilestone) {
-                    // This is the first milestone that has not yet been reached
-                    milestoneStatusClass = 'milestone-next';
-                    foundNextMilestone = true; // Set flag so subsequent ones are 'future'
-                } else {
-                    // All other milestones that are not passed are considered future
-                    milestoneStatusClass = 'milestone-future';
-                }
-
-                // Add alternating level class for visual styling (e.g., staggering vertical position)
-                const levelClass = `milestone-level-${milestoneLevel % 2}`;
-                milestoneLevel++; // Increment for the next milestone
-
-                milestonesHtml += `
-                    <div class="milestone-marker ${milestoneStatusClass} ${levelClass}" style="left: ${milestonePercentage}%">
-                        <div class="milestone-line"></div>
-                        <span class="milestone-name">${milestone.milestone_name} ($${milestone.target_amount.toLocaleString()})</span>
-                    </div>
-                `;
-            }
-        });
-    }
-    return milestonesHtml;
-}
-
-function emptyMissions(res, containerElement) {
-    const noMissionsMessage = document.createElement('p');
-    noMissionsMessage.textContent = 'No missions found or data format incorrect.';
-    containerElement.append(noMissionsMessage);
 }
