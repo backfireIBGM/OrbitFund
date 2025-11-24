@@ -290,3 +290,62 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFilePreview(missionVideoInput, missionVideoPreview, collectedFiles.video);
     setupFilePreview(techDocsInput, techDocsPreview, collectedFiles.documents);
 });
+
+
+// Get references to the elements
+const milestoneCountSpan = document.getElementById('milestoneCount');
+const decrementMilestoneBtn = document.getElementById('decrementMilestone');
+const incrementMilestoneBtn = document.getElementById('incrementMilestone');
+const milestonesContainer = document.getElementById('milestonesContainer');
+
+let milestoneCount = 0;
+
+// Function to update the displayed count
+const updateMilestoneCount = () => {
+  milestoneCountSpan.textContent = milestoneCount;
+};
+
+// Function to add a new milestone input group
+const addMilestone = () => {
+  milestoneCount++;
+  updateMilestoneCount();
+
+  const milestoneDiv = document.createElement('div');
+  milestoneDiv.className = 'milestone-item';
+  milestoneDiv.id = `milestone-${milestoneCount}`;
+
+  milestoneDiv.innerHTML = `
+    <label for="milestoneName-${milestoneCount}">Milestone ${milestoneCount} Name:</label>
+    <input type="text" id="milestoneName-${milestoneCount}" name="milestoneName[]" placeholder="e.g., Satellite Design & Prototyping">
+
+    <label for="milestoneTarget-${milestoneCount}">Funding Goal:</label>
+    <input
+      type="number"
+      id="milestoneTarget-${milestoneCount}"
+      name="milestoneTarget[]"
+      placeholder="Funding Goal (USD, no $ or commas):"
+      min="0"
+    >
+  `;
+
+  milestonesContainer.appendChild(milestoneDiv);
+};
+
+// Function to remove the last milestone input group
+const removeLastMilestone = () => {
+  if (milestoneCount > 0) {
+    const lastMilestoneDiv = document.getElementById(`milestone-${milestoneCount}`);
+    if (lastMilestoneDiv) {
+      milestonesContainer.removeChild(lastMilestoneDiv);
+      milestoneCount--;
+      updateMilestoneCount();
+    }
+  }
+};
+
+// Event listeners for the buttons
+incrementMilestoneBtn.addEventListener('click', addMilestone);
+decrementMilestoneBtn.addEventListener('click', removeLastMilestone);
+
+// Initialize with one milestone if desired, or keep at 0
+// addMilestone();

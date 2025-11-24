@@ -11,7 +11,6 @@
 </head>
 <body>
     <a href="index.html" class="nav-back">← Back to Home</a>
-    
     <div class="container">
         <div class="header">
             <h1>Start Your Mission</h1>
@@ -33,6 +32,16 @@
                 <div class="form-group"><label for="missionTitle">Mission Title</label><input type="text" id="missionTitle" name="title" placeholder="e.g., Earth Climate Monitor CubeSat"></div>
                 <div class="form-group"><label for="missionDescription">Mission Description</label><textarea id="missionDescription" name="description" rows="4" placeholder="Describe your mission in detail. What will your CubeSat do?"></textarea></div>
                 <div class="form-group"><label for="missionGoals">Mission Goals & Objectives</label><textarea id="missionGoals" name="goals" rows="3" placeholder="List your specific mission objectives and expected outcomes..."></textarea></div>
+                <div class="form-group">
+                <label>Milestones</label>
+                <div id="milestoneCounter" style="display: flex; align-items: center;">
+                    <button type="button" id="decrementMilestone">-</button>
+                    <span id="milestoneCount" style="margin: 0 10px;">0</span>
+                    <button type="button" id="incrementMilestone">+</button>
+                </div>
+                <div id="milestonesContainer">
+                </div>
+                </div>
                 <div class="form-row">
                 <div class="form-group">
                     <label for="missionType">Mission Type</label>
