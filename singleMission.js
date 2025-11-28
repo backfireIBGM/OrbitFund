@@ -1,13 +1,9 @@
-// singleMission.js
-
 document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'http://localhost:3000/api';
     const missionDetailsContainer = document.querySelector('.missions'); // Or your specific container for single mission details
 
-    // --- CORRECTED: Extract mission ID from URL parameters ---
     const urlParams = new URLSearchParams(window.location.search);
     const missionIdToFetch = urlParams.get('id'); // Get the 'id' parameter from the URL (e.g., singleMission.html?id=116)
-    // --- End Extraction ---
 
     if (missionIdToFetch) {
         await fetchAndLogApprovedMission(missionIdToFetch);
@@ -25,9 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // This URL still uses 'missionId' (lowercase) because it's a dynamic part of the path,
-            // matching how typical REST APIs expect the ID in the URL.
-            // Your backend's route would typically be something like `/approved-missions/:id`.
             const response = await fetch(`${API_BASE_URL}/approved-missions/${missionId}`, {
                 method: 'GET',
                 headers: {
@@ -69,7 +62,6 @@ function handleResponse(res) {
     }
     missionsDiv.innerHTML = '';
 
-    // --- CORRECTED: Check for res.Id (capital I) from the fetched mission object ---
     if (res && typeof res === 'object' && res.Id) {
         createMissionElement(res, missionsDiv);
     } else {
@@ -77,11 +69,9 @@ function handleResponse(res) {
     }
 }
 
-// Ensure these helper functions are accessible in this file
-// (defined in this file, or imported if using modules)
 function createMissionElement(mission, containerElement) {
     const missionElement = document.createElement('div');
-    missionElement.className = 'mission-item'; // Consider renaming to 'single-mission-detail' for clarity
+    missionElement.className = 'mission-item';
 
     const imagesSectionHtml = createImageElementsHtml(mission);
 
@@ -109,7 +99,7 @@ function createMissionElement(mission, containerElement) {
     missionElement.innerHTML = `
         <h2>${mission.title}</h2>
         <p>Current Funding: <span class="funding-amount">$${mission.currentFunding.toLocaleString()}</span></p>
-        <p>Goal: <span class="funding-amount">$${mission.fundingGoal.toLocaleString()}</span></p>
+        <p>Goal: <span class="funding-amount">$${mission.fundingGoal ? mission.fundingGoal.toLocaleString() : "N/A"}</span></p>
         ${progressAreaHtml}
         <p>Description: ${mission.description}</p>
         <h4>Images:</h4>

@@ -1,0 +1,252 @@
+/* --- Mission Item Container Styles --- */
+.missions {
+    display: grid; /* Use CSS Grid for layout */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid columns */
+    gap: 30px; /* Space between grid items */
+    padding: 0 20px; /* Optional: Add some horizontal padding to the grid itself */
+    max-width: 1400px; /* Optional: Limit the overall width of the grid for very large screens */
+    margin: 20px auto; /* Center the grid container horizontally */
+}
+
+.mission-item {
+    margin-bottom: 0px;
+    background-color: #394955; /* Dark gray background for mission items */
+}
+
+.mission-item:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  outline: 2px solid #f3b7ad; /* Example: 2px solid outline */
+}
+
+/* --- Text Styles within Mission Item --- */
+.mission-item h3 {
+    color: #ec6a52; /* A bright, distinct color for titles */
+    padding: 10px 15px;
+    font-size: 1.8em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+.mission-item p {
+    color: #bdbdbd; /* Slightly darker light gray for paragraph text */
+    font-size: 1em;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.mission-item h4 {
+    color: #e0e0e0; /* Match general text color */
+    font-size: 1.2em;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+/* --- Images Container --- */
+.mission-images {
+    display: flex;
+    flex-wrap: wrap; /* Important for responsiveness: images wrap to next line */
+    gap: 15px; /* Increased space between images */
+    margin-top: 15px; /* Keep your existing top margin */
+    justify-content: center; /* Center the single image wrapper */
+    align-items: flex-start;
+    width: 95%; /* Set width to 95% of its parent (.mission-item) */
+    margin-left: auto; /* Center the container horizontally */
+    margin-right: auto; /* Center the container horizontally */
+    box-sizing: border-box; /* Explicitly set box model */
+    position: relative; /* Ensure it forms a stacking context */
+    z-index: 1; /* Default/lower than progress area if overlaying */
+}
+
+/* --- Individual Image Wrapper --- */
+.mission-image-wrapper {
+    flex: 1 1 100%; /* Allow it to grow, shrink, and take up 100% of available space */
+    width: auto; /* Remove fixed width, let flex property control it */
+    height: auto; /* Let the height be determined by the image content */
+    max-height: 400px; /* Add a max-height to prevent extremely tall images, adjust as needed */
+    overflow: hidden; /* Important for clean edges if image is larger than max-height */
+    border: 1px solid #5a5a5a; /* A light border around each image wrapper */
+    border-radius: 6px;
+    background-color: #333; /* Dark background for empty space in wrappers */
+    display: flex; /* To center the image within its wrapper */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for images */
+    padding-bottom: 10px;
+}
+
+.mission-image-wrapper img {
+    max-width: 100%; /* Ensures image doesn't overflow wrapper */
+    max-height: 100%; /* Ensures image doesn't overflow wrapper */
+    width: 100%; /* Make the image fill the wrapper's width */
+    height: auto; /* Let height adjust to maintain aspect ratio */
+    object-fit: contain; /* CRUCIAL: Keeps aspect ratio, no cropping */
+    border-radius: 4px; /* Slightly rounded images */
+}
+
+/* --- Progress Bar Area --- */
+.mission-progress-area {
+    width: 100%;
+    /* No longer a fixed height based on multiple levels.
+       It will now naturally take the height of its children (the bar).
+       If markers are absolutely positioned and extend below,
+       this container's height won't include them, which is often desired for overlays. */
+    margin-top: 20px;
+    margin-bottom: 25px; /* Keep some space below the bar if not overlaying */
+    position: relative; /* Still good for containing absolutely positioned markers */
+    /* z-index: 5; /* Consider adding z-index if you decide to overlay it */
+    /* background-color: rgba(0,0,0,0.1); /* Debug */
+}
+
+/* --- Progress Bar Container --- */
+.mission-progress-bar-container {
+    width: 100%;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+    height: 25px; /* Height of the bar itself */
+    position: relative; /* IMPORTANT: Changed from absolute to relative for simpler flow */
+    top: 0; /* Remove top offset if relative, it will follow normal flow */
+    left: 0;
+    overflow: visible;
+    /* background-color: rgba(0,0,255,0.1); /* Debug */
+}
+
+.mission-progress-bar-fill {
+    height: 100%;
+    background-color: #a0d9ff;
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.mission-progress-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f0f0f0;
+    font-weight: bold;
+    font-size: 0.9em;
+    z-index: 1; /* Keep above the fill */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+/* --- Milestone Marker Base Styles (Simplified) --- */
+.milestone-marker {
+    position: absolute; /* Relative to .mission-progress-bar-container or .mission-progress-area */
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: normal;
+    /* Basic positioning for markers directly attached to the bar */
+    top: calc(var(--bar-h, 25px) + 5px); /* Just below the bar, using a default for --bar-h */
+}
+
+.milestone-line {
+    width: 2.39px;
+    background-color: #777; /* Default/Future color */
+    position: absolute;
+    top: var(--bar-h, 25px); /* Line starts at the bottom of the progress bar */
+    height: 15px; /* Fixed height for line */
+    z-index: 4;
+}
+
+.milestone-name {
+    position: absolute; /* Relative to its parent .milestone-marker */
+    font-size: 0.75em;
+    text-align: center;
+    z-index: 10;
+    text-shadow: none;
+    background-color: #1e1e1e;
+    border: 1px solid; /* Border color will be set by status classes */
+    border-radius: 4px;
+    padding: 3px 6px;
+    line-height: 1.2;
+    width: clamp(80px, 15vw, 120px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    top: calc(var(--bar-h, 25px) + 20px); /* Position name below the line */
+}
+
+/* Removed milestone level specific calculations like --text-h, --gap-line-to-text, --gap-text-to-text */
+:root {
+    --bar-h: 25px; /* Height of the progress bar itself */
+    /* Removed: --text-h, --gap-line-to-text, --gap-text-to-text */
+}
+
+/* --- Milestone Status Colors --- */
+
+/* Passed Milestones: Green */
+.milestone-marker.milestone-passed .milestone-line {
+    background-color: #4CAF50; /* Green */
+}
+.milestone-marker.milestone-passed .milestone-name {
+    border-color: #4CAF50; /* Green border */
+    color: #4CAF50; /* Green text */
+    font-weight: normal;
+}
+
+.milestone-marker.milestone-next .milestone-line {
+    background-color: #a0d9ff; /* Consistent with future line color */
+}
+.milestone-marker.milestone-next .milestone-name {
+    border-color: #a0d9ff; /* Consistent with future border color */
+    color: #a0d9ff; /* Consistent with future text color */
+    font-weight: bold; /* Can still make it bold to signify it's the immediate next */
+}
+
+/* Future Milestones: Muted gold/yellowish */
+.milestone-marker.milestone-future .milestone-line {
+    background-color: #a0d9ff; /* Line color for future, based on image "Launch Window Booking" */
+}
+.milestone-marker.milestone-future .milestone-name {
+    border-color: #a0d9ff; /* Border color for future, based on image */
+    color: #a0d9ff; /* Text color for future, based on image */
+    font-weight: normal;
+}
+
+/* --- Responsive Adjustments --- */
+/* For smaller tablets and larger phones: 2 columns */
+@media (max-width: 1024px) {
+    .missions {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Slightly smaller min-width */
+        gap: 20px;
+        padding: 0 15px;
+    }
+}
+
+/* For small tablets and phones: 1 column */
+@media (max-width: 768px) {
+    .missions {
+        grid-template-columns: 1fr; /* Single column */
+        gap: 20px;
+        padding: 0 10px;
+    }
+    /* You might want to adjust .mission-item padding for small screens here too */
+    .mission-item {
+        padding: 20px; /* Example adjustment */
+    }
+}
+
+/* For very small phones */
+@media (max-width: 480px) {
+    .missions {
+        padding: 0 5px;
+    }
+    .mission-item {
+        padding: 15px; /* Example adjustment */
+    }
+}
+
+/* --- Utility / Helper Classes --- */
+.funding-amount {
+    color: #a0d9ff;
+    font-weight: bold;
+}
