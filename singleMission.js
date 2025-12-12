@@ -1,50 +1,40 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'http://localhost:3000/api';
+
+    // Get references to all necessary DOM elements from your HTML
     const missionTitleElem = document.getElementById('mission-title');
     const missionLaunchDateElem = document.getElementById('mission-launch-date');
     const missionHoursToGoElem = document.getElementById('mission-hours-to-go');
-    const missionCurrentFundingElem = document.getElementById(
-        'mission-current-funding'
-    );
-    const missionFundingGoalElem = document.getElementById(
-        'mission-funding-goal'
-    );
-    const missionProgressBarFillElem = document.querySelector(
-        '.mission-progress-bar-fill'
-    );
-    const missionProgressTextElem = document.querySelector(
-        '.mission-progress-text'
-    );
-    const milestoneMarkersContainer = document.querySelector(
-        '.milestone-markers-container'
-    );
-    const missionDescriptionElem = document.getElementById(
-        'mission-description'
-    );
-    const missionBudgetBreakdownElem = document.getElementById(
-        'mission-budget-breakdown'
-    );
+    const missionCurrentFundingElem = document.getElementById('mission-current-funding');
+    const missionFundingGoalElem = document.getElementById('mission-funding-goal');
+    const missionProgressBarFillElem = document.querySelector('.mission-progress-bar-fill');
+    const missionProgressTextElem = document.querySelector('.mission-progress-text');
+    const milestoneMarkersContainer = document.querySelector('.milestone-markers-container');
+    const missionDescriptionElem = document.getElementById('mission-description');
+    const missionBudgetBreakdownElem = document.getElementById('mission-budget-breakdown');
     const missionGoalsElem = document.getElementById('mission-goals');
     const missionRewardsElem = document.getElementById('mission-rewards');
     const missionTeamInfoElem = document.getElementById('mission-team-info');
-    const missionImagesSection = document.getElementById(
-        'mission-images-section'
-    );
-    const missionVideosSection = document.getElementById(
-        'mission-videos-section'
-    );
-    const missionDocumentsSection = document.getElementById(
-        'mission-documents-section'
-    );
-    const missionDetailsContainer = document.querySelector(
-        '.mission-details-container'
-    ); // Main container for error messages
+    const missionImagesSection = document.getElementById('mission-images-section');
+    const missionVideosSection = document.getElementById('mission-videos-section');
+    const missionDocumentsSection = document.getElementById('mission-documents-section');
+    // Main container for error messages, as used in your HTML
+    const missionDetailsContainer = document.querySelector('.mission-details-container');
+
+    // IMPORTANT: Since 'related-missions-section' is NOT in your HTML,
+    // this variable will correctly be null. We will ensure no code attempts
+    // to manipulate a non-existent element.
+    const relatedMissionsSection = document.getElementById('related-missions-section'); // This will be null
 
     const urlParams = new URLSearchParams(window.location.search);
-    const missionIdToFetch = urlParams.get('id'); // Get the 'id' parameter from the URL
+    const currentMissionId = urlParams.get('id'); // Get the 'id' parameter from the URL
 
-    if (missionIdToFetch) {
-        await fetchAndLogApprovedMission(missionIdToFetch);
+    if (currentMissionId) {
+        // First, fetch and display the details of the specific mission
+        await fetchAndDisplaySingleMissionDetails(currentMissionId);
+        // Then, fetch and log 6 other approved missions, excluding the current one
+        // Note: They are NOT displayed on the page as there's no DOM element for them
+        await fetchAndLogRelatedMissions(currentMissionId, 6);
     } else {
         console.warn(
             '--- No mission ID found in URL parameters. Cannot fetch single mission. ---'
@@ -55,15 +45,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    async function fetchAndLogApprovedMission(missionId) {
+    /**
+     * Fetches and displays the details for a single approved mission.
+     * @param {string} missionId The ID of the mission to fetch.
+     */
+    async function fetchAndDisplaySingleMissionDetails(missionId) {
         if (!missionId) {
             console.error(
-                '--- No Mission ID provided for fetchAndLogApprovedMission ---'
+                '--- No Mission ID provided for fetchAndDisplaySingleMissionDetails ---'
             );
             return;
         }
 
         try {
+            // API call to the single mission endpoint (handled by singleMission.js)
             const response = await fetch(
                 `${API_BASE_URL}/approved-missions/${missionId}`,
                 {
@@ -75,12 +70,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
 
             if (response.ok) {
-                const approvedMission = await response.json();
-                updateMissionDetails(approvedMission);
+                const singleMissionData = await response.json();
+                console.log(`--- Fetched Single Mission Details (ID: ${missionId}) ---`, singleMissionData);
+                updateMissionDetails(singleMissionData); // Update the main display
             } else {
                 const errorText = await response.text();
                 console.error(
-                    '--- Failed to fetch approved mission (Response not OK) ---',
+                    '--- Failed to fetch single mission (Response not OK) ---',
                     `Status: ${response.status}`,
                     `Error Text: ${errorText}`
                 );
@@ -89,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         } catch (error) {
-            console.error('--- Network Error Fetching Approved Mission ---');
+            console.error('--- Network Error Fetching Single Mission ---');
             console.error(error);
             if (missionDetailsContainer) {
                 missionDetailsContainer.innerHTML =
@@ -98,9 +94,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function updateMissionDetails(mission) {
-        console.log(mission);
+    /**
+     * Fetches a list of related approved missions, excluding a specific ID, and logs them.
+     * Does NOT display them on the page as there is no corresponding DOM element.
+     * @param {string} excludeMissionId The ID of the mission to exclude from the list.
+     * @param {number} maxMissionsCount The maximum number of related missions to fetch.
+     */
+    async function fetchAndLogRelatedMissions(excludeMissionId, maxMissionsCount) {
+        // No longer warn "Related missions section not found." as this is the intended behavior
+        // since we are not displaying them.
 
+        try {
+            // API call to the public missions list endpoint (handled by publicMissions.js)
+            const response = await fetch(
+                `${API_BASE_URL}/missions/approved-missions?maxMissions=${maxMissionsCount}&excludeId=${excludeMissionId}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const relatedMissionsData = await response.json();
+                // <<< LOGGING THE RELATED MISSIONS DATA HERE >>>
+                console.log(`--- Fetched ${maxMissionsCount} Related Missions (Excluding ID: ${excludeMissionId}) ---`, relatedMissionsData);
+
+                // --- REMOVED ALL DISPLAY LOGIC FOR RELATED MISSIONS ---
+                // No relatedMissionsSection to manipulate, no createRelatedMissionElement call.
+                // The data is fetched and logged, but not rendered.
+                // --- END REMOVED DISPLAY LOGIC ---
+
+            } else {
+                const errorText = await response.text();
+                console.error(
+                    '--- Failed to fetch related missions (Response not OK) ---',
+                    `Status: ${response.status}`,
+                    `Error Text: ${errorText}`
+                );
+                // No relatedMissionsSection to display error in
+            }
+        } catch (error) {
+            console.error('--- Network Error Fetching Related Missions ---');
+            console.error(error);
+            // No relatedMissionsSection to display error in
+        }
+    }
+
+    /**
+     * Updates the main mission details section of the page with the provided mission data.
+     * @param {object} mission The mission data object.
+     */
+    function updateMissionDetails(mission) {
         document.title = `OrbitFund | ${mission.title}`;
 
         if (!mission || typeof mission !== 'object' || !mission.Id) {
@@ -114,9 +160,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     '<p>Error: Could not display mission details due to invalid data.</p>';
             }
             return;
+            // Early return if mission data is invalid
         }
 
-        // Update basic text content
+        // Update basic text content using null-safe checks (if element exists)
         if (missionTitleElem) missionTitleElem.textContent = mission.title;
         if (missionDescriptionElem)
             missionDescriptionElem.textContent = mission.description;
@@ -167,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (missionImagesSection) {
             let imagesHtml = '';
             if (mission.images && mission.images.length > 0) {
-                imagesHtml = ''; // Clear "No images" message
+                imagesHtml = ''; // Clear "No images" message if any exist
                 mission.images.forEach((imageUrl) => {
                     imagesHtml += `<div class="mission-image-wrapper">
                                        <img src="${imageUrl}" alt="${mission.title} image" loading="lazy">
@@ -217,6 +264,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // --- REMOVED createRelatedMissionElement function ---
+    // This function is no longer needed as related missions are not displayed.
+    // If you decide to re-enable display later, you would uncomment this function.
+
+    /**
+     * Generates HTML for milestone markers based on mission funding.
+     * @param {object} mission The mission data.
+     * @returns {string} HTML string for milestone markers.
+     */
     function createMilestoneMarkersHtml(mission) {
         let milestonesHtml = '';
         if (mission.milestones && mission.milestones.length > 0 && mission.fundingGoal > 0) {
@@ -224,7 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             mission.milestones.sort((a, b) => a.target_amount - b.target_amount);
 
             let foundNextMilestone = false;
-            let milestoneLevel = 0; // To alternate between level-0 and level-1
+            let milestoneLevel = 0; // To alternate between level-0 and level-1 for CSS styling
 
             mission.milestones.forEach((milestone) => {
                 const milestonePercentage =
@@ -268,6 +324,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         return milestonesHtml;
     }
 
+    /**
+     * Formats the mission's launch date into a readable string.
+     * @param {object} mission The mission data.
+     * @returns {string} The formatted launch date.
+     */
     function formatLaunchDate(mission) {
         const launchDate = new Date(mission.launchDate);
         const options = {
@@ -278,6 +339,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         return launchDate.toLocaleString(undefined, options);
     }
 
+    /**
+     * Calculates the hours remaining until the mission's end date.
+     * @param {object} mission The mission data.
+     * @returns {number} The number of full hours remaining, or 0 if ended/invalid data.
+     */
     function getHoursToGo(mission) {
         // --- Input Validation ---
         if (!mission || typeof mission !== 'object') {

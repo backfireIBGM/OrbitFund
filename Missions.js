@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchAndLogApprovedMissions() {
         try {
-            const response = await fetch(`${API_BASE_URL}/missions/approved-missions`, {
+            const response = await fetch(`${API_BASE_URL}/missions/approved-missions?maxMissions=50`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
