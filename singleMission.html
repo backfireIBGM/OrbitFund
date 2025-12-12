@@ -3,14 +3,98 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>OrbitFund | Find a Mission Your Mission</title>
+        <title>OrbitFund | Your Mission</title>
         <link rel="stylesheet" href="styleMain.css">
         <link rel="stylesheet" href="styleSingleMission.css">
         <link rel="icon" type="image/x-icon" href="satellite.svg">
-        <div class="missions">
-        </div>
     </head>
-    <body class="missions-page">
+    <body>
+        <div class="mission-details-container">
+            <div class="mission-header-box">
+                <h2 id="mission-title">Loading Mission...</h2>
+                <div class="mission-info-grid">
+                    <div class="mission-info-left">
+                        <p class="countdown">
+                            <span class="label">Launch Date:</span>
+                            <span id="mission-launch-date"></span>
+                        </p>
+                        <p class="countdown">
+                            <span class="label">Hours to go:</span>
+                            <span id="mission-hours-to-go"></span>
+                        </p>
+                    </div>
+
+                    <div class="mission-button-container">
+                        <button class="support-button">Support Mission</button>
+                    </div>
+
+                    <div class="mission-info-right">
+                        <p class="funding">
+                            <span class="label">Current Funding:</span>
+                            <span id="mission-current-funding"></span>
+                        </p>
+                        <p class="funding">
+                            <span class="label">Goal:</span>
+                            <span id="mission-funding-goal"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mission-progress-area">
+                    <div class="mission-progress-bar-container">
+                        <div
+                            class="mission-progress-bar-fill"
+                            style="width: 0%"
+                        ></div>
+                        <span class="mission-progress-text"
+                            >0.0% Funded</span
+                        >
+                        <div class="milestone-markers-container">
+                            <!-- Milestone markers will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p>
+                <span class="label">Description:</span>
+                <span id="mission-description"></span>
+            </p>
+            <p>
+                <span class="label">Budget Breakdown:</span>
+                <span id="mission-budget-breakdown"></span>
+            </p>
+            <p>
+                <span class="label">Goals:</span>
+                <span id="mission-goals"></span>
+            </p>
+
+            <p>
+                <span class="label">Rewards:</span>
+                <span id="mission-rewards"></span>
+            </p>
+            <p>
+                <span class="label">Team Info:</span>
+                <span id="mission-team-info"></span>
+            </p>
+
+            <h4 class="label">Images:</h4>
+            <div id="mission-images-section" class="mission-images">
+                <!-- Images will be injected here -->
+                <p>No images available.</p>
+            </div>
+            <h4 class="label">Videos:</h4>
+            <div id="mission-videos-section" class="mission-videos">
+                <!-- Videos will be injected here -->
+                <p>No videos available.</p>
+            </div>
+            <h4 class="label">Documents:</h4>
+            <div id="mission-documents-section" class="mission-documents">
+                <!-- Documents will be injected here -->
+                <p>No documents available.</p>
+            </div>
+        </div>
+
         <script src="singleMission.js"></script>
     </body>
 </html>
