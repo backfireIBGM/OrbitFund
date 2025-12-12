@@ -25,10 +25,13 @@
 .mission-item h3 {
     color: #ec6a52; /* A bright, distinct color for titles */
     padding: 10px 15px;
-    font-size: 1.8em;
+    font-size: 1.8em; /* Your desired fixed default size */
     margin-top: 0;
     margin-bottom: 15px;
     padding-bottom: 10px;
+    white-space: nowrap;   /* Crucial: Keeps text on a single line */
+    overflow: hidden;      /* Hides any text that overflows its container */
+    text-overflow: ellipsis; /* Displays "..." for truncated text */
 }
 
 .mission-item p {
@@ -138,7 +141,7 @@
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
-/* --- Milestone Marker Base Styles (Simplified) --- */
+/* --- Milestone Marker Base Styles --- */
 .milestone-marker {
     position: absolute; /* Relative to .mission-progress-bar-container or .mission-progress-area */
     transform: translateX(-50%);

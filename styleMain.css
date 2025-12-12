@@ -1,8 +1,17 @@
 /* --- Global Body / Page Styles --- */
 body {
-    background-color: #9dbdba; /* A slightly softer dark background than pure black */
+    background-color: #040027; /* A slightly softer dark background than pure black */
     color: #e0e0e0; /* Light gray for general text for readability */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A clear, modern font */
     margin: 0;
     padding: 20px;
+}
+
+h2 {
+  color: #0266a0; /* A bright, distinct blue color for titles */
+  font-weight: bold; /* Make the text bold as seen in the image */
+  font-size: 1.8em; /* Your desired fixed default size */
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
 }

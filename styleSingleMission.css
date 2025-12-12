@@ -11,25 +11,53 @@
 .mission-item {
     margin-bottom: 0px;
     background-color: #394955; /* Dark gray background for mission items */
+    padding: 30px; /* Added padding to the mission-item for content spacing */
+    border-radius: 8px; /* Slightly rounded corners for the item */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: transform 0.2s ease-in-out, outline 0.2s ease-in-out; /* Smooth transition */
+    outline: 2px solid transparent; /* Default transparent outline */
+}
+
+.mission-button-container {
+    text-align: center; /* Centers inline-level content (like a button) */
+    margin-top: 20px;   /* Space above button */
+    margin-bottom: 20px; /* Space below button */
+}
+
+.support-button {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Adding some subtle border for the "pop" from the screenshot */
+    border: 2px solid #5cb8ff; /* Lighter blue border */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Soft glow */
+}
+
+.support-button:hover {
+    background-color: #0056b3;
+    border-color: #3399ff;
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.7);
+}
+
+/* Optional: Add some margin to the P tags for consistent spacing if needed */
+.mission-header-box p {
+    margin-bottom: 5px; /* Adjust as desired for spacing between text lines */
+    margin-top: 0;
 }
 
 .mission-item:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
-  outline: 2px solid #f3b7ad; /* Example: 2px solid outline */
+    transform: translateY(-5px); /* Lift effect on hover */
+    outline: 2px solid #f3b7ad; /* Example: 2px solid outline */
 }
 
 /* --- Text Styles within Mission Item --- */
-.mission-item h3 {
-    color: #ec6a52; /* A bright, distinct color for titles */
-    padding: 10px 15px;
-    font-size: 1.8em;
-    margin-top: 0;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-}
-
 .mission-item p {
-    color: #bdbdbd; /* Slightly darker light gray for paragraph text */
+    color: #e0e0e0; /* Match general text color */
     font-size: 1em;
     margin-bottom: 10px;
     line-height: 1.6;
@@ -40,6 +68,21 @@
     font-size: 1.2em;
     margin-top: 25px;
     margin-bottom: 15px;
+}
+
+.mission-info-grid {
+    display: flex;
+    justify-content: space-between; /* Puts space between items */
+    align-items: center; /* Vertically centers items */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    margin-bottom: 20px; /* Space between the info groups/button and the progress bar */
+}
+
+.mission-info-left,
+.mission-info-right {
+    /* Flex properties will make them take up available space,
+       but content within will determine min-width */
+    flex-basis: auto;
 }
 
 /* --- Images Container --- */
@@ -87,15 +130,21 @@
 /* --- Progress Bar Area --- */
 .mission-progress-area {
     width: 100%;
-    /* No longer a fixed height based on multiple levels.
-       It will now naturally take the height of its children (the bar).
-       If markers are absolutely positioned and extend below,
-       this container's height won't include them, which is often desired for overlays. */
     margin-top: 20px;
-    margin-bottom: 25px; /* Keep some space below the bar if not overlaying */
-    position: relative; /* Still good for containing absolutely positioned markers */
-    /* z-index: 5; /* Consider adding z-index if you decide to overlay it */
-    /* background-color: rgba(0,0,0,0.1); /* Debug */
+    margin-bottom: 25px;
+    position: relative; /* Keep this to contain absolutely positioned markers */
+    /* Recalculate min-height:
+       (bar height + gap from bar to line) // Starting point for all lines
+       + (longest line height) + (text height) // Max vertical extent for any single milestone
+       + 10px (extra padding for bottom)
+    */
+    min-height: calc(
+        var(--bar-h, 25px) + var(--gap-bar-to-line, 5px) +
+        var(--line-h-level1) + /* Use the longest line height to determine overall depth */
+        var(--text-h-approx) + /* Max text box height */
+        10px
+    );
+    overflow: visible; /* Ensure markers are not clipped if they extend beyond calculated min-height */
 }
 
 /* --- Progress Bar Container --- */
@@ -103,7 +152,7 @@
     width: 100%;
     background-color: #3a3a3a;
     border-radius: 5px;
-    height: 25px; /* Height of the bar itself */
+    height: var(--bar-h, 25px); /* Height of the bar itself */
     position: relative; /* IMPORTANT: Changed from absolute to relative for simpler flow */
     top: 0; /* Remove top offset if relative, it will follow normal flow */
     left: 0;
@@ -113,7 +162,7 @@
 
 .mission-progress-bar-fill {
     height: 100%;
-    background-color: #a0d9ff;
+    background-color: #0266a0;
     border-radius: 5px;
     transition: width 0.5s ease-in-out;
     position: absolute;
@@ -128,33 +177,36 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #f0f0f0;
+    color: #009f76;
     font-weight: bold;
     font-size: 0.9em;
     z-index: 1; /* Keep above the fill */
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
-/* --- Milestone Marker Base Styles (Simplified) --- */
+/* --- Milestone Marker Base Styles --- */
 .milestone-marker {
-    position: absolute; /* Relative to .mission-progress-bar-container or .mission-progress-area */
-    transform: translateX(-50%);
+    position: absolute;
+    left: var(--milestone-left); /* Use a CSS variable for dynamic left position */
+    transform: translateX(-50%); /* Center the marker horizontally on its left position */
     z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     white-space: normal;
-    /* Basic positioning for markers directly attached to the bar */
-    top: calc(var(--bar-h, 25px) + 5px); /* Just below the bar, using a default for --bar-h */
+
+    /* CRITICAL CHANGE: ALL markers start their lines at the same point */
+    top: calc(var(--bar-h) + var(--gap-bar-to-line));
 }
 
 .milestone-line {
     width: 2.39px;
     background-color: #777; /* Default/Future color */
-    position: absolute;
-    top: var(--bar-h, 25px); /* Line starts at the bottom of the progress bar */
-    height: 15px; /* Fixed height for line */
+    position: absolute; /* Relative to its parent .milestone-marker */
+    left: 50%; /* Center the line horizontally within the marker */
+    transform: translateX(-50%); /* Adjust for its own width */
+    height: var(--line-h); /* Use a variable for line height */
     z-index: 4;
+
+    /* Line starts at the top of the marker and goes downwards */
+    top: 0;
 }
 
 .milestone-name {
@@ -172,44 +224,78 @@
     left: 50%;
     transform: translateX(-50%);
     white-space: normal;
-    top: calc(var(--bar-h, 25px) + 20px); /* Position name below the line */
+
+    /* Position the name directly below the line */
+    top: var(--line-h);
 }
 
-/* Removed milestone level specific calculations like --text-h, --gap-line-to-text, --gap-text-to-text */
+.milestone-passed .milestone-line {
+    background-color: #15ff00; /* Green for passed milestones */
+}
+
+.milestone-passed .milestone-name {
+    border-color: #15ff00;
+    color: #15ff00;
+}
+
+.milestone-next .milestone-line {
+    background-color: #eeff00; /* Yellow for the next milestone */
+}
+
+.milestone-next .milestone-name {
+    border-color: #eeff00;
+    color: #eeff00;
+}
+
+.milestone-future .milestone-line {
+    background-color: #777; /* Gray for future milestones */
+}
+
+.milestone-future .milestone-name {
+    border-color: #777;
+    color: #ffffff;
+}
+
+/* Define some common variables at the root or a suitable parent */
 :root {
     --bar-h: 25px; /* Height of the progress bar itself */
-    /* Removed: --text-h, --gap-line-to-text, --gap-text-to-text */
+    --gap-bar-to-line: 5px; /* Visual gap between the progress bar and the *top* of ALL lines */
+    --line-h-level0: 30px; /* Height of the line for level 0 milestones (e.g., M1, M3) */
+    --line-h-level1: 60px; /* Height of the line for level 1 milestones (e.g., M2) - make this taller */
+    --gap-line-to-text: 0px; /* Line touches the text box directly */
+    --text-h-approx: 30px; /* Approximate height of the milestone name box, adjust as needed */
+    --gap-text-to-text: 10px; /* Vertical gap between stacked milestone name boxes (no longer used for positioning lines) */
 }
 
-/* --- Milestone Status Colors --- */
+/* --- Milestone Level Specific Positioning --- */
 
-/* Passed Milestones: Green */
-.milestone-marker.milestone-passed .milestone-line {
-    background-color: #4CAF50; /* Green */
-}
-.milestone-marker.milestone-passed .milestone-name {
-    border-color: #4CAF50; /* Green border */
-    color: #4CAF50; /* Green text */
-    font-weight: normal;
+
+/* Level 0: positioned closer to the bar */
+.milestone-marker.milestone-level-0 {
+    --line-h: var(--line-h-level0);
+    /* 'top' is already set in .milestone-marker base style */
 }
 
-.milestone-marker.milestone-next .milestone-line {
-    background-color: #a0d9ff; /* Consistent with future line color */
-}
-.milestone-marker.milestone-next .milestone-name {
-    border-color: #a0d9ff; /* Consistent with future border color */
-    color: #a0d9ff; /* Consistent with future text color */
-    font-weight: bold; /* Can still make it bold to signify it's the immediate next */
+/* Level 1: (Milestone 2) - Use a longer line height for staggering */
+.milestone-marker.milestone-level-1 {
+    --line-h: var(--line-h-level1);
+    /* 'top' is already set in .milestone-marker base style */
 }
 
-/* Future Milestones: Muted gold/yellowish */
-.milestone-marker.milestone-future .milestone-line {
-    background-color: #a0d9ff; /* Line color for future, based on image "Launch Window Booking" */
+p {
+    color: #ffffff;
 }
-.milestone-marker.milestone-future .milestone-name {
-    border-color: #a0d9ff; /* Border color for future, based on image */
-    color: #a0d9ff; /* Text color for future, based on image */
-    font-weight: normal;
+
+.label {
+    color: #009f76;
+    font-weight: bold;
+}
+
+.mission-header-box {
+    border: 10px solid #0266a0; /* Light grey border */
+    padding: 30px; /* Spacing inside the box */
+    margin-bottom: 60px; /* Space below the box */
+    border-radius: 16px; /* Slightly rounded corners */
 }
 
 /* --- Responsive Adjustments --- */
@@ -243,10 +329,4 @@
     .mission-item {
         padding: 15px; /* Example adjustment */
     }
-}
-
-/* --- Utility / Helper Classes --- */
-.funding-amount {
-    color: #a0d9ff;
-    font-weight: bold;
 }
