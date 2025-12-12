@@ -101,6 +101,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateMissionDetails(mission) {
         console.log(mission);
 
+        document.title = `OrbitFund | ${mission.title}`;
+
         if (!mission || typeof mission !== 'object' || !mission.Id) {
             console.error(
                 'Invalid mission data received:',
