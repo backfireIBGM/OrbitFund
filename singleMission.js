@@ -18,23 +18,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     const missionImagesSection = document.getElementById('mission-images-section');
     const missionVideosSection = document.getElementById('mission-videos-section');
     const missionDocumentsSection = document.getElementById('mission-documents-section');
-    // Main container for error messages, as used in your HTML
+
     const missionDetailsContainer = document.querySelector('.mission-details-container');
 
-    // IMPORTANT: Since 'related-missions-section' is NOT in your HTML,
-    // this variable will correctly be null. We will ensure no code attempts
-    // to manipulate a non-existent element.
-    const relatedMissionsSection = document.getElementById('related-missions-section'); // This will be null
+    const relatedMissionsWrapper = document.getElementById('related-missions-wrapper');
+    const targetContainer = relatedMissionsWrapper;
+
+    const relatedMissionTemplate = document.getElementById('related-Mission');
 
     const urlParams = new URLSearchParams(window.location.search);
-    const currentMissionId = urlParams.get('id'); // Get the 'id' parameter from the URL
+    const currentMissionId = urlParams.get('id');
+
+    // --- Initial checks for template and target container ---
+    if (!relatedMissionTemplate) {
+        console.error("--- ERROR: HTML template 'related-Mission' not found! Cannot display related missions. ---");
+        if (targetContainer) {
+            const errorP = document.createElement('p');
+            errorP.textContent = 'A critical part of the page content could not be loaded.';
+            targetContainer.appendChild(errorP);
+        }
+        return; // Stop execution if template is missing
+    }
+    if (!targetContainer) {
+        console.error("--- ERROR: Dedicated related missions wrapper (#related-missions-wrapper) not found! Cannot display related missions. ---");
+        return; // Stop execution if container is missing
+    }
+    // Check for relatedMissionsMarker is removed as it's no longer in HTML:
+    // if (!relatedMissionsMarker) { console.warn("--- WARNING: ... ---"); }
+    // --- End initial checks ---
+
+    const numRelatedMissions = 6;
 
     if (currentMissionId) {
-        // First, fetch and display the details of the specific mission
         await fetchAndDisplaySingleMissionDetails(currentMissionId);
-        // Then, fetch and log 6 other approved missions, excluding the current one
-        // Note: They are NOT displayed on the page as there's no DOM element for them
-        await fetchAndLogRelatedMissions(currentMissionId, 6);
+        await fetchAndDisplayRelatedMissions(currentMissionId, numRelatedMissions);
     } else {
         console.warn(
             '--- No mission ID found in URL parameters. Cannot fetch single mission. ---'
@@ -58,7 +75,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // API call to the single mission endpoint (handled by singleMission.js)
             const response = await fetch(
                 `${API_BASE_URL}/approved-missions/${missionId}`,
                 {
@@ -72,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (response.ok) {
                 const singleMissionData = await response.json();
                 console.log(`--- Fetched Single Mission Details (ID: ${missionId}) ---`, singleMissionData);
-                updateMissionDetails(singleMissionData); // Update the main display
+                updateMissionDetails(singleMissionData);
             } else {
                 const errorText = await response.text();
                 console.error(
@@ -94,18 +110,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /**
-     * Fetches a list of related approved missions, excluding a specific ID, and logs them.
-     * Does NOT display them on the page as there is no corresponding DOM element.
-     * @param {string} excludeMissionId The ID of the mission to exclude from the list.
-     * @param {number} maxMissionsCount The maximum number of related missions to fetch.
-     */
-    async function fetchAndLogRelatedMissions(excludeMissionId, maxMissionsCount) {
-        // No longer warn "Related missions section not found." as this is the intended behavior
-        // since we are not displaying them.
-
+    async function fetchAndDisplayRelatedMissions(excludeMissionId, maxMissionsCount) {
         try {
-            // API call to the public missions list endpoint (handled by publicMissions.js)
             const response = await fetch(
                 `${API_BASE_URL}/missions/approved-missions?maxMissions=${maxMissionsCount}&excludeId=${excludeMissionId}`,
                 {
@@ -118,14 +124,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (response.ok) {
                 const relatedMissionsData = await response.json();
-                // <<< LOGGING THE RELATED MISSIONS DATA HERE >>>
                 console.log(`--- Fetched ${maxMissionsCount} Related Missions (Excluding ID: ${excludeMissionId}) ---`, relatedMissionsData);
-
-                // --- REMOVED ALL DISPLAY LOGIC FOR RELATED MISSIONS ---
-                // No relatedMissionsSection to manipulate, no createRelatedMissionElement call.
-                // The data is fetched and logged, but not rendered.
-                // --- END REMOVED DISPLAY LOGIC ---
-
+                displayRelatedMissions(relatedMissionsData);
             } else {
                 const errorText = await response.text();
                 console.error(
@@ -133,12 +133,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     `Status: ${response.status}`,
                     `Error Text: ${errorText}`
                 );
-                // No relatedMissionsSection to display error in
+                displayRelatedMissions([]); // Call display with empty array on API error
             }
         } catch (error) {
-            console.error('--- Network Error Fetching Related Missions ---');
-            console.error(error);
-            // No relatedMissionsSection to display error in
+            console.error('--- Network Error Fetching Related Missions ---', error);
+            displayRelatedMissions([]); // Call display with empty array on network error
         }
     }
 
@@ -264,9 +263,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- REMOVED createRelatedMissionElement function ---
-    // This function is no longer needed as related missions are not displayed.
-    // If you decide to re-enable display later, you would uncomment this function.
+    function displayRelatedMissions(missions) {
+        const fragment = document.createDocumentFragment();
+        targetContainer.innerHTML = '';
+
+        if (missions && missions.length > 0) {
+            const heading = document.createElement('h3');
+            heading.textContent = 'Related Missions';
+            // Append heading directly to the new targetContainer
+            targetContainer.appendChild(heading);
+
+            missions.forEach((mission) => {
+                const cardClone = relatedMissionTemplate.content.cloneNode(true);
+                fillCard(mission, cardClone, fragment);
+            });
+
+            // Append all created cards (within the fragment) at once directly to targetContainer
+            targetContainer.appendChild(fragment);
+
+        } else {
+            const noMissionsParagraph = document.createElement('p');
+            noMissionsParagraph.textContent = 'No related missions found.';
+            // Append message directly to the new targetContainer
+            targetContainer.appendChild(noMissionsParagraph);
+        }
+    }
+
+    function fillCard(missionData, cardFragment, appendTargetFragment) {
+        const cardLinkElem = cardFragment.querySelector('.related-mission-card-link');
+        const titleElem = cardFragment.querySelector('.related-mission-title');
+        const descriptionElem = cardFragment.querySelector('.related-mission-description');
+
+        if (titleElem && descriptionElem && cardLinkElem) {
+            titleElem.textContent = missionData.title || 'Untitled Mission';
+            descriptionElem.textContent = missionData.description || 'No description available.';
+
+            if (missionData.Id) {
+                cardLinkElem.href = `singleMission.html?id=${missionData.Id}`;
+            } else {
+                cardLinkElem.removeAttribute('href');
+                cardLinkElem.style.cursor = 'default';
+            }
+
+        } else {
+            console.warn("One or more required elements (title/description/card link) not found in cloned template.");
+            if (cardLinkElem) {
+                cardLinkElem.style.display = 'none';
+            }
+        }
+
+        if (appendTargetFragment) {
+            appendTargetFragment.appendChild(cardFragment);
+        } else {
+            targetContainer.appendChild(cardFragment);
+        }
+    }
 
     /**
      * Generates HTML for milestone markers based on mission funding.

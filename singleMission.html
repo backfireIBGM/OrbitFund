@@ -94,6 +94,28 @@
                 <p>No documents available.</p>
             </div>
         </div>
+
+        <div id="related-missions-wrapper">
+            <!-- This is where the "Related Missions" heading and cards will be inserted by JS -->
+            <p class="initial-related-message">Loading related missions...</p>
+        </div>
+
+        <template id="related-Mission">
+            <a href="#" class="related-mission-card-link">
+                <div class="related-mission-card-content">
+                    <h4>
+                        <span class="label">Title:</span>
+                        <span class="related-mission-title"></span>
+                    </h4>
+                    <p>
+                        <span class="label">Description:</span>
+                        <span class="related-mission-description"></span>
+                    </p>
+                </div>
+            </a>
+        </template>
+        <!-- END OF TEMPLATE -->
+
         <script src="singleMission.js"></script>
     </body>
 </html>

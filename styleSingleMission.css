@@ -283,8 +283,70 @@ p {
     border-radius: 16px;
 }
 
+
+/* --- New/Updated Styles for the ENTIRE Clickable Card --- */
+.related-mission-card-link {
+    display: block; /* Make the <a> tag behave like a block-level card */
+    background-color: #1a1a40; /* Card background color */
+    border: 1px solid #0266a0; /* Card border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Inner padding */
+    margin-bottom: 15px; /* Space between cards */
+    color: #e0e0e0; /* Text color for content inside the card */
+    text-decoration: none; /* Remove underline from the link */
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+.related-mission-card-link:hover {
+    background-color: #2a2a50; /* Darker background on hover */
+    border-color: #007bff; /* Highlight border on hover */
+    transform: translateY(-2px); /* Slight lift effect on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+}
+
+.related-mission-card-link:active {
+    background-color: #004085; /* Even darker on click */
+    transform: translateY(0); /* Press down effect */
+}
+
+/* Styles for content *inside* the card link */
+.related-mission-card-link h4 {
+    color: #009f76; /* Green for titles */
+    font-size: 1.1em;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.related-mission-card-link p {
+    font-size: 0.95em;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+.related-mission-card-link .label {
+    color: #009f76;
+    font-weight: bold;
+}
+
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
+    /* Hide the "Related Missions" heading */
+    #related-missions-marker + h3 {
+        display: none !important;
+    }
+
+    /* Hide the entire clickable card-link */
+    .mission-details-container #related-missions-marker ~ .related-mission-card-link {
+        display: none !important;
+    }
+
+    /* Hide the "No related missions found." paragraph */
+    #related-missions-marker ~ p {
+        display: none !important;
+    }
+
     body {
         padding: 10px;
     }
@@ -300,8 +362,8 @@ p {
     }
 
     .mission-info-grid {
-        flex-direction: column; /* Stack items vertically on smaller screens */
-        align-items: center; /* Center them */
+        flex-direction: column;
+        align-items: center;
         gap: 15px;
         margin-bottom: 20px;
     }
