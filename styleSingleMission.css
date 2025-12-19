@@ -9,8 +9,8 @@ body {
 
 h2 {
     color: #0266a0; /* A bright, distinct blue color for titles */
-    font-weight: bold; /* Make the text bold as seen in the image */
-    font-size: 2.2em; /* Adjusted to match image */
+    font-weight: bold;
+    font-size: 2.2em;
     margin-top: 0;
     margin-bottom: 20px; /* Adjusted spacing */
     padding-bottom: 5px;
@@ -89,7 +89,7 @@ h2 {
     line-height: 1.4;
 }
 
-/* --- Images Container --- */
+/* --- Images Container (Main Mission - REVERTED TO ORIGINAL) --- */
 .mission-images {
     display: flex;
     flex-wrap: wrap; /* Important for responsiveness: images wrap to next line */
@@ -105,7 +105,7 @@ h2 {
     z-index: 1;
 }
 
-/* --- Individual Image Wrapper --- */
+/* --- Individual Image Wrapper (Main Mission - REVERTED TO ORIGINAL) --- */
 .mission-image-wrapper {
     flex: 1 1 100%; /* Allow it to grow, shrink, and take up 100% of available space */
     width: auto;
@@ -125,7 +125,7 @@ h2 {
 .mission-image-wrapper img {
     max-width: 100%;
     max-height: 100%;
-    width: 100%;
+    width: 100%; /* Original was 100% */
     height: auto;
     object-fit: contain;
     border-radius: 4px;
@@ -285,34 +285,54 @@ p {
 
 
 /* --- New/Updated Styles for the ENTIRE Clickable Card --- */
+/* Parent container for related missions needs position: relative for absolute children */
+#related-missions-wrapper {
+    position: relative; /* Essential for positioning children absolutely */
+    padding: 0; /* Remove padding if it's not desired with absolute children */
+    margin: 0; /* Remove margin if not desired */
+    min-height: 0; /* Ensures it collapses if no flow content */
+    height: 0; /* Collapse wrapper height */
+}
+
+/* Related Mission Card Link (with your previous absolute positioning) */
 .related-mission-card-link {
     display: block; /* Make the <a> tag behave like a block-level card */
     background-color: #1a1a40; /* Card background color */
     border: 1px solid #0266a0; /* Card border */
     border-radius: 8px; /* Rounded corners */
     padding: 15px; /* Inner padding */
-    margin-bottom: 15px; /* Space between cards */
     color: #e0e0e0; /* Text color for content inside the card */
     text-decoration: none; /* Remove underline from the link */
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
     cursor: pointer; /* Indicate it's clickable */
+
+    /* --- ABSOLUTE POSITIONING (as you set it) --- */
+    position: absolute;
+    top: -3890px; /* Position it far above for now */
+    left: 1500px;
+    width: 250px; /* Fixed width as previously discussed */
+    height: auto; /* Allow height to adjust based on content */
+    max-height: 400px;
+    margin-bottom: 0;
+    z-index: 10;
+    box-sizing: border-box;
 }
 
 .related-mission-card-link:hover {
-    background-color: #2a2a50; /* Darker background on hover */
-    border-color: #007bff; /* Highlight border on hover */
-    transform: translateY(-2px); /* Slight lift effect on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    background-color: #2a2a50;
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .related-mission-card-link:active {
-    background-color: #004085; /* Even darker on click */
-    transform: translateY(0); /* Press down effect */
+    background-color: #004085;
+    transform: translateY(0);
 }
 
-/* Styles for content *inside* the card link */
+/* Styles for content *inside* the related mission card link */
 .related-mission-card-link h4 {
-    color: #009f76; /* Green for titles */
+    color: #009f76;
     font-size: 1.1em;
     margin-top: 0;
     margin-bottom: 5px;
@@ -329,22 +349,26 @@ p {
     font-weight: bold;
 }
 
+/* --- NEW STYLES for images within Related Mission Cards ONLY --- */
+.related-mission-card-link img { /* Target the img directly within the card link */
+    max-width: 100%; /* Ensure image doesn't exceed card width */
+    max-height: 150px; /* Set a reasonable max-height for images in related cards */
+    width: auto; /* Allow natural width based on aspect ratio */
+    height: auto; /* Allow natural height based on aspect ratio */
+    object-fit: contain; /* Key: Scale image to fit, preserve aspect ratio, no cropping */
+    display: block; /* Remove extra space below image */
+    margin: 10px auto; /* Center the image horizontally within the card, add some vertical space */
+    border-radius: 4px;
+    background-color: #0a0a20; /* A slightly darker background for image placeholder */
+    padding: 5px; /* A little internal padding for the image itself */
+    box-sizing: border-box; /* Include padding in dimensions */
+}
+
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
-    /* Hide the "Related Missions" heading */
-    #related-missions-marker + h3 {
-        display: none !important;
-    }
-
-    /* Hide the entire clickable card-link */
-    .mission-details-container #related-missions-marker ~ .related-mission-card-link {
-        display: none !important;
-    }
-
-    /* Hide the "No related missions found." paragraph */
-    #related-missions-marker ~ p {
-        display: none !important;
+    #related-missions-wrapper {
+        display: none !important; /* Hides the entire container including heading and cards */
     }
 
     body {

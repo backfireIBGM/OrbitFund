@@ -1,6 +1,20 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const API_BASE_URL = 'http://localhost:3000/api';
 
+    // Define the hardcoded top positions for the "rows" FIRST,
+    // so it's accessible by functions defined later.
+    const rowTopPositions = [
+        -3890, // Top position for Row 0 (Cards 0 and 3)
+        -3590,   // Top position for Row 1 (Cards 1 and 4)
+        -3190   // Top position for Row 2 (Cards 2 and 5)
+    ];
+
+    // Define the hardcoded left positions based on the original index
+    const cardLeftPositions = {
+        firstColumn: 0,    // For cards with originalIndex 0, 1, 2
+        secondColumn: 1500 // For cards with originalIndex 3, 4, 5
+    };
+
     // Get references to all necessary DOM elements from your HTML
     const missionTitleElem = document.getElementById('mission-title');
     const missionLaunchDateElem = document.getElementById('mission-launch-date');
@@ -265,38 +279,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function displayRelatedMissions(missions) {
         const fragment = document.createDocumentFragment();
-        targetContainer.innerHTML = '';
+        targetContainer.innerHTML = ''; // Clear the "Loading related missions..." message
 
         if (missions && missions.length > 0) {
             const heading = document.createElement('h3');
             heading.textContent = 'Related Missions';
-            // Append heading directly to the new targetContainer
             targetContainer.appendChild(heading);
 
-            missions.forEach((mission) => {
+            missions.forEach((mission, index) => {
                 const cardClone = relatedMissionTemplate.content.cloneNode(true);
-                fillCard(mission, cardClone, fragment);
+                // Calculate which row this card belongs to
+                const rowIndex = index % 3; // 0, 1, 2, 0, 1, 2 for indices 0, 1, 2, 3, 4, 5
+                fillCard(mission, cardClone, fragment, rowIndex, index); // Pass rowIndex and original index
             });
 
-            // Append all created cards (within the fragment) at once directly to targetContainer
             targetContainer.appendChild(fragment);
 
         } else {
             const noMissionsParagraph = document.createElement('p');
             noMissionsParagraph.textContent = 'No related missions found.';
-            // Append message directly to the new targetContainer
             targetContainer.appendChild(noMissionsParagraph);
         }
     }
 
-    function fillCard(missionData, cardFragment, appendTargetFragment) {
+    // Modified fillCard to accept rowIndex and originalIndex for positioning
+    function fillCard(missionData, cardFragment, appendTargetFragment, rowIndex, originalIndex) {
         const cardLinkElem = cardFragment.querySelector('.related-mission-card-link');
         const titleElem = cardFragment.querySelector('.related-mission-title');
         const descriptionElem = cardFragment.querySelector('.related-mission-description');
+        const imageElem = cardFragment.querySelector('img');
 
-        if (titleElem && descriptionElem && cardLinkElem) {
+        if (titleElem && descriptionElem && cardLinkElem && imageElem) {
             titleElem.textContent = missionData.title || 'Untitled Mission';
             descriptionElem.textContent = missionData.description || 'No description available.';
+
+            // Set the image source
+            if (missionData.images && missionData.images.length > 0) {
+                imageElem.src = missionData.images[0];
+            } else {
+                imageElem.style.display = 'none'; // Hide image if no source is available
+            }
 
             if (missionData.Id) {
                 cardLinkElem.href = `singleMission.html?id=${missionData.Id}`;
@@ -305,8 +327,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cardLinkElem.style.cursor = 'default';
             }
 
+            // --- Apply hardcoded top position based on rowIndex ---
+            if (rowIndex !== undefined && rowTopPositions[rowIndex] !== undefined) {
+                cardLinkElem.style.top = `${rowTopPositions[rowIndex]}px`;
+            } else {
+                console.warn(`No specific top position for rowIndex ${rowIndex} (original index ${originalIndex}).`);
+            }
+
+            // --- Apply hardcoded left position based on originalIndex ---
+            let leftPosition;
+            if (originalIndex >= 0 && originalIndex <= 2) { // Cards 0, 1, 2
+                leftPosition = cardLeftPositions.firstColumn;
+            } else if (originalIndex >= 3 && originalIndex <= 5) { // Cards 3, 4, 5
+                leftPosition = cardLeftPositions.secondColumn;
+            } else {
+                console.warn(`No specific left position for original index ${originalIndex}.`);
+                leftPosition = 0; // Default or fallback
+            }
+            cardLinkElem.style.left = `${leftPosition}px`;
+
+
         } else {
-            console.warn("One or more required elements (title/description/card link) not found in cloned template.");
+            console.warn("One or more required elements (title/description/card link/image) not found in cloned template.");
             if (cardLinkElem) {
                 cardLinkElem.style.display = 'none';
             }
