@@ -31,8 +31,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const missionGoalsElem = document.getElementById('mission-goals');
     const missionRewardsElem = document.getElementById('mission-rewards');
     const missionTeamInfoElem = document.getElementById('mission-team-info');
+
+    // References for the Image Carousel
     const missionImagesSection = document.getElementById('mission-images-section');
+    const imageCarouselSlidesContainer = missionImagesSection ? missionImagesSection.querySelector('.carousel-slides') : null;
+    const imageCarouselPrevButton = missionImagesSection ? missionImagesSection.querySelector('.carousel-button.prev') : null;
+    const imageCarouselNextButton = missionImagesSection ? missionImagesSection.querySelector('.carousel-button.next') : null;
+    const imageCarouselDotsContainer = missionImagesSection ? missionImagesSection.querySelector('.carousel-dots') : null;
+    const noImagesMessage = missionImagesSection ? missionImagesSection.querySelector('.no-images-message') : null;
+
+    // References for the Video Carousel
     const missionVideosSection = document.getElementById('mission-videos-section');
+    const videoCarouselSlidesContainer = missionVideosSection ? missionVideosSection.querySelector('.video-carousel-slides') : null;
+    const videoCarouselPrevButton = missionVideosSection ? missionVideosSection.querySelector('.video-carousel-button-prev') : null;
+    const videoCarouselNextButton = missionVideosSection ? missionVideosSection.querySelector('.video-carousel-button-next') : null;
+    const videoCarouselDotsContainer = missionVideosSection ? missionVideosSection.querySelector('.video-carousel-dots') : null;
+    const noVideosMessage = missionVideosSection ? missionVideosSection.querySelector('.no-videos-message') : null;
+
     const missionDocumentsSection = document.getElementById('mission-documents-section');
 
     const missionDetailsContainer = document.querySelector('.mission-details-container');
@@ -225,40 +240,112 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
         }
 
-        // Handle Images
-        if (missionImagesSection) {
-            let imagesHtml = '';
+        // Handle Images - Carousel
+        if (missionImagesSection && imageCarouselSlidesContainer && imageCarouselPrevButton && imageCarouselNextButton && imageCarouselDotsContainer && noImagesMessage) {
+            imageCarouselSlidesContainer.innerHTML = ''; // Clear previous images
+            imageCarouselDotsContainer.innerHTML = ''; // Clear previous dots
+            noImagesMessage.style.display = 'none'; // Hide default message
+
             if (mission.images && mission.images.length > 0) {
-                imagesHtml = ''; // Clear "No images" message if any exist
-                mission.images.forEach((imageUrl) => {
-                    imagesHtml += `<div class="mission-image-wrapper">
-                                       <img src="${imageUrl}" alt="${mission.title} image" loading="lazy">
-                                   </div>`;
+                mission.images.forEach((imageUrl, index) => {
+                    // Create slide
+                    const slideDiv = document.createElement('div');
+                    slideDiv.classList.add('carousel-slide');
+                    const imgElem = document.createElement('img');
+                    imgElem.src = imageUrl;
+                    imgElem.alt = `${mission.title} image ${index + 1}`;
+                    imgElem.loading = 'lazy';
+                    slideDiv.appendChild(imgElem);
+                    imageCarouselSlidesContainer.appendChild(slideDiv);
+
+                    // Create dot
+                    const dotSpan = document.createElement('span');
+                    dotSpan.classList.add('dot');
+                    dotSpan.dataset.index = index;
+                    imageCarouselDotsContainer.appendChild(dotSpan);
                 });
+
+                // Initialize carousel functionality after images are added
+                initCarousel(
+                    missionImagesSection,
+                    '.carousel-slides', // Default image carousel slides selector
+                    '.carousel-button.prev', // Default image carousel prev button selector
+                    '.carousel-button.next', // Default image carousel next button selector
+                    '.carousel-dots', // Default image carousel dots selector
+                    '.no-images-message' // Default image carousel no-content message
+                );
+
             } else {
-                imagesHtml = '<p>No images available.</p>';
+                noImagesMessage.style.display = 'block'; // Show "No images" message
+                // Hide carousel controls if no images
+                if (imageCarouselPrevButton) imageCarouselPrevButton.style.display = 'none';
+                if (imageCarouselNextButton) imageCarouselNextButton.style.display = 'none';
+                if (imageCarouselDotsContainer) imageCarouselDotsContainer.style.display = 'none';
+                // Also ensure carousel-slides transform is reset if there were previous images
+                if (imageCarouselSlidesContainer) imageCarouselSlidesContainer.style.transform = `translateX(0%)`;
             }
-            missionImagesSection.innerHTML = imagesHtml;
+        } else if (missionImagesSection) {
+            // Fallback if carousel elements are not found, use old method or show simple message
+            missionImagesSection.innerHTML = '<p>Image carousel structure not found. Displaying plain message or alternative.</p>';
+            console.error("--- Missing image carousel DOM elements. Check HTML and JS queries. ---");
         }
 
-        // Handle Videos
-        if (missionVideosSection) {
-            let videosHtml = '';
+
+        // Handle Videos - Carousel
+        if (missionVideosSection && videoCarouselSlidesContainer && videoCarouselPrevButton && videoCarouselNextButton && videoCarouselDotsContainer && noVideosMessage) {
+            videoCarouselSlidesContainer.innerHTML = ''; // Clear previous videos
+            videoCarouselDotsContainer.innerHTML = ''; // Clear previous dots
+            noVideosMessage.style.display = 'none'; // Hide default message
+
             if (mission.videos && mission.videos.length > 0) {
-                videosHtml = ''; // Clear "No videos" message
-                mission.videos.forEach((videoUrl) => {
-                    videosHtml += `<div class="mission-video-wrapper">
-                                       <video controls width="100%" height="auto">
-                                           <source src="${videoUrl}" type="video/mp4">
-                                           Your browser does not support the video tag.
-                                       </video>
-                                   </div>`;
+                mission.videos.forEach((videoUrl, index) => {
+                    // Create slide
+                    const slideDiv = document.createElement('div');
+                    slideDiv.classList.add('carousel-slide');
+                    const videoElem = document.createElement('video');
+                    videoElem.controls = true;
+                    videoElem.preload = 'metadata'; // Load metadata, not full video
+                    videoElem.setAttribute('width', '100%');
+                    videoElem.setAttribute('height', '100%'); // Set height to 100%
+                    const sourceElem = document.createElement('source');
+                    sourceElem.src = videoUrl;
+                    sourceElem.type = 'video/mp4'; // Assuming MP4, adjust if other formats are expected
+                    videoElem.appendChild(sourceElem);
+                    videoElem.innerHTML += 'Your browser does not support the video tag.'; // Fallback text
+                    slideDiv.appendChild(videoElem);
+                    videoCarouselSlidesContainer.appendChild(slideDiv);
+
+                    // Create dot
+                    const dotSpan = document.createElement('span');
+                    dotSpan.classList.add('dot');
+                    dotSpan.dataset.index = index;
+                    videoCarouselDotsContainer.appendChild(dotSpan);
                 });
+
+                // Initialize video carousel functionality
+                initCarousel(
+                    missionVideosSection,
+                    '.video-carousel-slides',
+                    '.video-carousel-button-prev',
+                    '.video-carousel-button-next',
+                    '.video-carousel-dots',
+                    '.no-videos-message'
+                );
+
             } else {
-                videosHtml = '<p>No videos available.</p>';
+                noVideosMessage.style.display = 'block'; // Show "No videos" message
+                // Hide carousel controls if no videos
+                if (videoCarouselPrevButton) videoCarouselPrevButton.style.display = 'none';
+                if (videoCarouselNextButton) videoCarouselNextButton.style.display = 'none';
+                if (videoCarouselDotsContainer) videoCarouselDotsContainer.style.display = 'none';
+                if (videoCarouselSlidesContainer) videoCarouselSlidesContainer.style.transform = `translateX(0%)`;
             }
-            missionVideosSection.innerHTML = videosHtml;
+        } else if (missionVideosSection) {
+            // Fallback if carousel elements are not found, use old method or show simple message
+            missionVideosSection.innerHTML = '<p>Video carousel structure not found. Displaying plain message or alternative.</p>';
+            console.error("--- Missing video carousel DOM elements. Check HTML and JS queries. ---");
         }
+
 
         // Handle Documents
         if (missionDocumentsSection) {
@@ -481,5 +568,98 @@ document.addEventListener('DOMContentLoaded', async () => {
         hoursToGo = Math.floor(hoursToGo);
 
         return hoursToGo;
+    }
+
+
+    /**
+     * Initializes carousel functionality for a given carousel container.
+     * @param {HTMLElement} parentCarouselContainer The main container for the carousel (e.g., missionImagesSection or missionVideosSection).
+     * @param {string} slidesSelector CSS selector for the slides container within this carousel.
+     * @param {string} prevButtonSelector CSS selector for the previous button.
+     * @param {string} nextButtonSelector CSS selector for the next button.
+     * @param {string} dotsContainerSelector CSS selector for the dots container.
+     * @param {string} noContentMessageSelector CSS selector for the 'no content' message.
+     */
+    function initCarousel(parentCarouselContainer, slidesSelector, prevButtonSelector, nextButtonSelector, dotsContainerSelector, noContentMessageSelector) {
+        const slidesContainer = parentCarouselContainer.querySelector(slidesSelector);
+        const slides = parentCarouselContainer.querySelectorAll(`${slidesSelector} > .carousel-slide`);
+        const prevButton = parentCarouselContainer.querySelector(prevButtonSelector);
+        const nextButton = parentCarouselContainer.querySelector(nextButtonSelector);
+        const dotsContainer = parentCarouselContainer.querySelector(dotsContainerSelector);
+        const dots = parentCarouselContainer.querySelectorAll(`${dotsContainerSelector} > .dot`);
+        const noContentMessage = parentCarouselContainer.querySelector(noContentMessageSelector);
+
+        if (!slidesContainer || slides.length === 0) {
+            if (noContentMessage) noContentMessage.style.display = 'block';
+            if (prevButton) prevButton.style.display = 'none';
+            if (nextButton) nextButton.style.display = 'none';
+            if (dotsContainer) dotsContainer.style.display = 'none';
+            return; // No content, no carousel needed
+        } else {
+            // Ensure controls are visible if there is content
+            if (prevButton) prevButton.style.display = 'block';
+            if (nextButton) nextButton.style.display = 'block';
+            if (dotsContainer) dotsContainer.style.display = 'flex';
+        }
+
+        let currentIndex = 0;
+
+        function updateCarousel() {
+            if (!slidesContainer) return;
+
+            // Stop any playing video when switching slides (important for video carousels)
+            // This is a common pattern for video carousels to prevent background audio
+            slides.forEach((slide, index) => {
+                const video = slide.querySelector('video');
+                if (video && index !== currentIndex) {
+                    video.pause();
+                    video.currentTime = 0; // Reset video to start
+                }
+            });
+
+            // Calculate the transform needed to show the current slide
+            const offset = -currentIndex * 100;
+            slidesContainer.style.transform = `translateX(${offset}%)`;
+
+            // Update active dot
+            if (dots) {
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentIndex);
+                });
+            }
+        }
+
+        function showNextSlide() {
+            currentIndex = (currentIndex + 1) % slides.length;
+            updateCarousel();
+        }
+
+        function showPrevSlide() {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            updateCarousel();
+        }
+
+        // Event Listeners for buttons
+        if (nextButton) {
+            nextButton.addEventListener('click', showNextSlide);
+        }
+        if (prevButton) {
+            prevButton.addEventListener('click', showPrevSlide);
+        }
+
+        // Event Listeners for dots
+        if (dotsContainer) {
+            dotsContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('dot')) {
+                    const index = parseInt(event.target.dataset.index, 10);
+                    if (!isNaN(index)) {
+                        currentIndex = index;
+                        updateCarousel();
+                    }
+                }
+            });
+        }
+
+        updateCarousel();
     }
 });

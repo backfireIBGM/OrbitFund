@@ -61,12 +61,16 @@ h2 {
     line-height: 1.6;
 }
 
-.mission-details-container h4 {
-    color: #e0e0e0; /* Match general text color */
-    font-size: 1.3em; /* Slightly larger heading for sections */
-    margin-top: 30px;
-    margin-bottom: 18px;
-}
+ .mission-details-container h4 {
+    font-size: 1.3em;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    padding: 8px 0;
+    line-height: 1.4;
+    display: block;
+    color: #009f76;
+    font-weight: bold;
+ }
 
 .mission-info-grid {
     display: flex;
@@ -87,48 +91,6 @@ h2 {
 .mission-info-right p {
     font-size: 1.1em; /* Make the info text a bit larger */
     line-height: 1.4;
-}
-
-/* --- Images Container (Main Mission - REVERTED TO ORIGINAL) --- */
-.mission-images {
-    display: flex;
-    flex-wrap: wrap; /* Important for responsiveness: images wrap to next line */
-    gap: 15px; /* Space between images */
-    margin-top: 15px;
-    justify-content: center; /* Center the images */
-    align-items: flex-start;
-    width: 95%; /* Set width to 95% of its parent */
-    margin-left: auto; /* Center the container horizontally */
-    margin-right: auto; /* Center the container horizontally */
-    box-sizing: border-box;
-    position: relative;
-    z-index: 1;
-}
-
-/* --- Individual Image Wrapper (Main Mission - REVERTED TO ORIGINAL) --- */
-.mission-image-wrapper {
-    flex: 1 1 100%; /* Allow it to grow, shrink, and take up 100% of available space */
-    width: auto;
-    height: auto;
-    max-height: 400px;
-    overflow: hidden;
-    border: 1px solid #5a5a5a;
-    border-radius: 6px;
-    background-color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    padding-bottom: 10px;
-}
-
-.mission-image-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
-    width: 100%; /* Original was 100% */
-    height: auto;
-    object-fit: contain;
-    border-radius: 4px;
 }
 
 /* --- Progress Bar Area --- */
@@ -377,6 +339,127 @@ p {
     background-color: #0a0a20; /* A slightly darker background for image placeholder */
     padding: 5px; /* A little internal padding for the image itself */
     box-sizing: border-box; /* Include padding in dimensions */
+}
+
+
+/* --- Main Carousel Container (Shared styles for Images and Videos) --- */
+/* Reusing general carousel container, slides, button, dot styles */
+.mission-images-carousel-container,
+.mission-videos-carousel-container { /* Apply these styles to both image and video carousels */
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* Adjust max width as desired for the carousel */
+    margin: 25px auto; /* Center the carousel, add spacing */
+    overflow: hidden; /* Crucial for hiding content outside the current view */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    background-color: #0c0c2c; /* Darker background for the carousel */
+    aspect-ratio: 16 / 9; /* Maintain a 16:9 aspect ratio for the carousel viewport */
+    display: flex; /* Use flexbox to easily position no-content message */
+    align-items: center; /* Center no-content message vertically */
+    justify-content: center; /* Center no-content message horizontally */
+}
+
+/* Specific messages for no content */
+.mission-images-carousel-container .no-images-message,
+.mission-videos-carousel-container .no-videos-message {
+    position: absolute;
+    color: #999;
+    font-size: 1.1em;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+/* --- Carousel Slides Wrapper (Shared) --- */
+.carousel-slides {
+    display: flex; /* Use flexbox for horizontal arrangement of slides */
+    transition: transform 0.5s ease-in-out; /* Smooth slide transition */
+    height: 100%; /* Take full height of container */
+    width: 100%; /* Take full width of container */
+}
+
+/* --- Individual Carousel Slide (Shared) --- */
+.carousel-slide {
+    min-width: 100%; /* Each slide takes up the full width of the carousel-slides view */
+    height: 100%; /* Take full height */
+    display: flex;
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    flex-shrink: 0; /* Prevent slides from shrinking */
+    background-color: #1a1a40; /* Background for individual slides */
+}
+
+/* Styling for images within image carousel slides */
+.mission-images-carousel-container .carousel-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Contain the image within the slide, preserve aspect ratio */
+    border-radius: 4px; /* Slightly rounded corners for images */
+}
+
+/* Styling for videos within video carousel slides */
+.mission-videos-carousel-container .carousel-slide video {
+    width: 100%; /* Video takes up full width of its slide */
+    height: 100%; /* Video takes up full height of its slide */
+    object-fit: contain; /* Contain the video, preserve aspect ratio */
+    border-radius: 4px;
+}
+
+
+/* --- Carousel Navigation Buttons (Shared) --- */
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1.5em;
+    cursor: pointer;
+    z-index: 20; /* Ensure buttons are above slides */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-button.prev {
+    left: 10px;
+}
+
+.carousel-button.next {
+    right: 10px;
+}
+
+/* --- Carousel Dots Indicator (Shared) --- */
+.carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px; /* Space between dots */
+    z-index: 20;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.3); /* Slight border for definition */
+}
+
+.dot.active {
+    background-color: #007bff; /* Active dot color */
+    transform: scale(1.2); /* Slightly larger active dot */
+    border-color: #007bff;
 }
 
 
