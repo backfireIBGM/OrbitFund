@@ -381,7 +381,7 @@ p {
 
 
 /* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
+@media (max-width: 1900px) {
     /* Explicitly hide the fixed cards on smaller screens */
     #related-missions-wrapper, /* Hiding the wrapper element itself */
     .related-mission-card-link { /* Explicitly target and hide the fixed cards */
@@ -423,24 +423,5 @@ p {
         font-size: 0.75em;
         padding: 2px 4px;
         width: clamp(80px, 20vw, 100px);
-    }
-}
-
-@media (max-width: 480px) {
-    .mission-details-container {
-        padding: 0 5px;
-    }
-
-    h2 {
-        font-size: 1.5em;
-        margin-bottom: 10px;
-    }
-
-    .mission-header-box {
-        padding: 15px 20px;
-    }
-
-    .milestone-marker.milestone-level-1 {
-        --line-h: 45px; /* Shorter line for very small screens */
     }
 }
