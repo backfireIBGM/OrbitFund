@@ -3,16 +3,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Define the hardcoded top positions for the "rows" FIRST,
     // so it's accessible by functions defined later.
+    // *** THESE VALUES ARE NOW RELATIVE TO THE VIEWPORT TOP ***
     const rowTopPositions = [
-        -3890, // Top position for Row 0 (Cards 0 and 3)
-        -3590,   // Top position for Row 1 (Cards 1 and 4)
-        -3190   // Top position for Row 2 (Cards 2 and 5)
+        50, // Cards 0 and 3 will be 100px from the top of the viewport
+        400, // Cards 1 and 4 will be 450px from the top of the viewport
+        750  // Cards 2 and 5 will be 800px from the top of the viewport
     ];
 
     // Define the hardcoded left positions based on the original index
+    // *** THESE VALUES ARE NOW RELATIVE TO THE VIEWPORT LEFT ***
     const cardLeftPositions = {
-        firstColumn: 0,    // For cards with originalIndex 0, 1, 2
-        secondColumn: 1500 // For cards with originalIndex 3, 4, 5
+        firstColumn: 100,    // For cards with originalIndex 0, 1, 2
+        secondColumn: 1600 // For cards with originalIndex 3, 4, 5
     };
 
     // Get references to all necessary DOM elements from your HTML

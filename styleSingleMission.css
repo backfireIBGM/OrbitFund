@@ -285,16 +285,18 @@ p {
 
 
 /* --- New/Updated Styles for the ENTIRE Clickable Card --- */
-/* Parent container for related missions needs position: relative for absolute children */
+/* Parent container for related missions needs its position defined.
+   If children are 'fixed', this wrapper's position doesn't influence them,
+   so it can be static, and should collapse if it has no flow content. */
 #related-missions-wrapper {
-    position: relative; /* Essential for positioning children absolutely */
-    padding: 0; /* Remove padding if it's not desired with absolute children */
-    margin: 0; /* Remove margin if not desired */
+    position: static; /* Fixed children ignore this parent's positioning, set to default */
+    padding: 0;
+    margin: 0;
     min-height: 0; /* Ensures it collapses if no flow content */
     height: 0; /* Collapse wrapper height */
 }
 
-/* Related Mission Card Link (with your previous absolute positioning) */
+/* Related Mission Card Link (NOW FIXED POSITIONING) */
 .related-mission-card-link {
     display: block; /* Make the <a> tag behave like a block-level card */
     background-color: #1a1a40; /* Card background color */
@@ -306,13 +308,17 @@ p {
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
     cursor: pointer; /* Indicate it's clickable */
 
-    /* --- ABSOLUTE POSITIONING (as you set it) --- */
-    position: absolute;
-    top: -3890px; /* Position it far above for now */
-    left: 1500px;
+    /* --- POSITIONING CHANGED TO FIXED --- */
+    position: fixed; /* This is the key change! */
+    /* Set default top/left to 0px. JavaScript will override these. */
+    /* This ensures they start on-screen if JS is slow or fails partially. */
+    top: 0px;
+    left: 0px;
+
     width: 250px; /* Fixed width as previously discussed */
     height: auto; /* Allow height to adjust based on content */
-    max-height: 400px;
+    max-height: 300px; /* Ensure total card height is limited */
+    overflow: hidden; /* Added to clip content, in combination with text-overflow */
     margin-bottom: 0;
     z-index: 10;
     box-sizing: border-box;
@@ -336,12 +342,21 @@ p {
     font-size: 1.1em;
     margin-top: 0;
     margin-bottom: 5px;
+    white-space: nowrap; /* Keep title on one line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis if title overflows */
 }
 
 .related-mission-card-link p {
     font-size: 0.95em;
     line-height: 1.4;
     margin-bottom: 5px;
+    /* --- Multi-line ellipsis for description --- */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word; /* Ensure long words break */
 }
 
 .related-mission-card-link .label {
@@ -367,8 +382,10 @@ p {
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
-    #related-missions-wrapper {
-        display: none !important; /* Hides the entire container including heading and cards */
+    /* Explicitly hide the fixed cards on smaller screens */
+    #related-missions-wrapper, /* Hiding the wrapper element itself */
+    .related-mission-card-link { /* Explicitly target and hide the fixed cards */
+        display: none !important;
     }
 
     body {
