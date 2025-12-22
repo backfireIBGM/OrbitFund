@@ -1,10 +1,10 @@
 /* --- Global Body / Page Styles --- */
 body {
-    background-color: #040027; /* A slightly softer dark background than pure black */
-    color: #e0e0e0; /* Light gray for general text for readability */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A clear, modern font */
-    margin: 0;
-    padding: 20px;
+  background-color: #040027; /* Your dark background color */
+  color: #e0e0e0; /* Light gray for general text */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0; /* Set body margin to 0 */
+  padding: 0; /* Set body padding to 0 */
 }
 
 h2 {
@@ -14,4 +14,35 @@ h2 {
   margin-top: 0;
   margin-bottom: 15px;
   padding-bottom: 10px;
+}
+
+/* --- Nar Bar --- */
+.nav-bar {
+  background-color: #0266a0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 99;
+
+  /* --- Flexbox for layout --- */
+  display: flex; /* Makes the nav-bar a flex container */
+  align-items: center; /* Vertically centers all direct children */
+  justify-content: center; /* Horizontally centers all direct children as a group */
+}
+
+.nav-bar .nav-bar-home img {
+  height: 50px;
+  width: 50px;
+}
+
+.nav-bar a {
+  color: #ffffff;
+  margin: 0 15px; /* Adds horizontal margin between all links */
+  text-decoration: none;
+}
+
+.nav-bar a:hover {
+  background-color: #014c7a;
+  border-radius: 5px;
 }

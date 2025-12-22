@@ -1,11 +1,4 @@
 /* --- Global Body / Page Styles --- */
-body {
-    background-color: #040027; /* A slightly softer dark background than pure black */
-    color: #e0e0e0; /* Light gray for general text for readability */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A clear, modern font */
-    margin: 0;
-    padding: 20px;
-}
 
 h2 {
     color: #0266a0; /* A bright, distinct blue color for titles */
@@ -18,9 +11,12 @@ h2 {
 
 /* --- Main Container for Single Mission Details --- */
 .mission-details-container {
-    max-width: 1000px; /* Limit the width of the single mission content */
-    margin: 30px auto; /* Center the container and add vertical margin */
-    padding: 0 20px; /* Padding on the sides */
+  max-width: 1000px;
+  /* Adjust this margin-top based on the nav-bar's final height + desired gap */
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
 }
 
 .mission-button-container {
@@ -476,7 +472,6 @@ p {
     }
 
     .mission-details-container {
-        margin: 20px auto;
         padding: 0 10px;
     }
 
