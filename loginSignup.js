@@ -62,12 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log('Login successful!', data);
-                // Store the token (e.g., in localStorage)
                 localStorage.setItem('orbitFundToken', data.token);
                 localStorage.setItem('orbitFundUsername', data.username);
-                alert(`Welcome back, ${data.username}!`);
-                window.location.href = 'index.html'; // Redirect to home
+                window.location.href = 'index.html';
             } else {
                 console.error('Login failed:', data);
                 alert(`Login Failed: ${data.message || data.title || 'Invalid credentials'}`);
