@@ -133,7 +133,6 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #009f76;
     font-weight: bold;
     font-size: 0.9em;
     z-index: 1;
@@ -275,7 +274,7 @@ p {
 
     width: 250px; /* Fixed width as previously discussed */
     height: auto; /* Allow height to adjust based on content */
-    max-height: 300px; /* Ensure total card height is limited */
+    max-height: 280px; /* Ensure total card height is limited */
     overflow: hidden; /* Added to clip content, in combination with text-overflow */
     margin-bottom: 0;
     z-index: 10;

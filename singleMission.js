@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // so it's accessible by functions defined later.
     // *** THESE VALUES ARE NOW RELATIVE TO THE VIEWPORT TOP ***
     const rowTopPositions = [
-        50, // Cards 0 and 3 will be 100px from the top of the viewport
-        400, // Cards 1 and 4 will be 450px from the top of the viewport
-        750  // Cards 2 and 5 will be 800px from the top of the viewport
+        70,
+        380,
+        690
     ];
 
     // Define the hardcoded left positions based on the original index
@@ -372,7 +372,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (missions && missions.length > 0) {
             const heading = document.createElement('h3');
-            heading.textContent = 'Related Missions';
             targetContainer.appendChild(heading);
 
             missions.forEach((mission, index) => {
