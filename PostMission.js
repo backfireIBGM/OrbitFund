@@ -32,6 +32,15 @@ const collectedFiles = {
     documents: new Set()
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('orbitFundToken');
+
+    if (!token) {
+        alert("You must be logged in to launch a mission. Redirecting to login page.");
+        window.location.replace("loginSignup.html?form=login");
+    }
+});
+
 // --- FUNCTION TO SHOW SPECIFIC STEP ---
 function showStep(stepNumber) {
     // Hide all sections
