@@ -16,9 +16,22 @@
     background-color: #394955; /* Dark gray background for mission items */
 }
 
-.mission-item:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
+/* Styles for hover and for keyboard-triggered focus */
+.mission-item:hover,
+.mission-item:focus-visible { /* Use :focus-visible here */
+  transform: translateY(-5px); /* Lift effect on hover and keyboard focus */
   outline: 2px solid #007bff; /* Example: 2px solid outline */
+  outline-offset: 2px; /* Add some space between the element and the outline for clarity */
+}
+
+/* Ensure that if a user clicks an item with the mouse, the default browser focus outline is removed,
+   but only if :focus-visible would NOT apply (i.e., not a keyboard interaction).
+   This prevents a double outline if both :focus and :focus-visible try to apply,
+   or the browser's default outline interfering with your custom :hover style on click. */
+.mission-item:focus:not(:focus-visible) {
+  outline: none;
+  /* You might also want to remove any transform here if you don't want the lift on mouse click focus */
+  transform: translateY(0);
 }
 
 /* --- Text Styles within Mission Item --- */

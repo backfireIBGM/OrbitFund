@@ -48,12 +48,25 @@ function handleResponse(res) {
 function createMissionElement(mission, containerElement) {
     const missionElement = document.createElement('div');
     missionElement.className = 'mission-item';
+    missionElement.setAttribute('tabindex', '0'); // Make the element tab-able
 
     missionElement.addEventListener('click', () => {
         if (mission.Id) {
             window.location.href = `singleMission.html?id=${mission.Id}`;
         } else {
             console.error('Mission ID is missing for this element, cannot navigate.');
+        }
+    });
+
+    // Add keyboard accessibility for Enter key
+    missionElement.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault(); // Prevent default scroll behavior for spacebar
+            if (mission.Id) {
+                window.location.href = `singleMission.html?id=${mission.Id}`;
+            } else {
+                console.error('Mission ID is missing for this element, cannot navigate.');
+            }
         }
     });
 
@@ -67,7 +80,6 @@ function createMissionElement(mission, containerElement) {
         }
     }
     const formattedPercentage = fundingPercentage.toFixed(1);
-
 
     const progressAreaHtml = `
         <div class="mission-progress-area">
