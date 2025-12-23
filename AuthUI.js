@@ -46,9 +46,15 @@ function logout() {
     localStorage.removeItem('orbitFundToken'); // Clear the JWT
     localStorage.removeItem('orbitFundUsername'); // Clear the username
     alert('You have been logged out.');
-    updateAuthUI(); // Update the UI immediately after logout
-    // Optionally, redirect to a specific page after logout if desired, e.g.:
-    // window.location.href = "index.html"; // Redirect to home
+
+    // Directly call the update function if on the homepage
+    // No need for DOMContentLoaded as the page is already loaded
+    const currentPage = window.location.pathname.split('/').pop();
+    if (currentPage === 'index.html' || currentPage === '') { // Added '' for root path
+      updateAuthUIHomePage();
+    }
+    // If on other pages, consider redirecting or updating other UI elements if necessary
+    // For now, we only care about the home page UI based on your problem description.
 }
 
 // --- Initialize UI on Page Load ---
@@ -60,7 +66,4 @@ if (currentPage === 'index.html') {
 } else {
   updateAuthUINarBar();
 }
-
-    // Listen for storage changes across tabs/windows (optional but good for UX)
-    window.addEventListener('storage', updateAuthUI);
 });

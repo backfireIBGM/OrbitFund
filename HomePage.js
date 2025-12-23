@@ -15,5 +15,3 @@ function showLogin() {
 function showCreateAccount() {
     window.location.href = "loginSignup.html?form=signup";
 }
-
-// --- User Authentication UI Management ---
