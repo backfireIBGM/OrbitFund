@@ -304,9 +304,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     slideDiv.classList.add('carousel-slide');
                     const videoElem = document.createElement('video');
                     videoElem.controls = true;
-                    videoElem.preload = 'metadata'; // Load metadata, not full video
-                    videoElem.setAttribute('width', '100%');
-                    videoElem.setAttribute('height', '100%'); // Set height to 100%
                     const sourceElem = document.createElement('source');
                     sourceElem.src = videoUrl;
                     sourceElem.type = 'video/mp4'; // Assuming MP4, adjust if other formats are expected

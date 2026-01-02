@@ -376,7 +376,7 @@ p {
 
 /* --- Individual Carousel Slide (Shared) --- */
 .carousel-slide {
-    min-width: 100%; /* Each slide takes up the full width of the carousel-slides view */
+    width: 100%; /* Each slide takes up the full width of the carousel-slides view */
     height: 100%; /* Take full height */
     display: flex;
     align-items: center; /* Vertically center content */
