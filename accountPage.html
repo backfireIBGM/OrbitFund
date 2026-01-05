@@ -1,45 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OrbitFund | Account Name</title>
-    <link rel="stylesheet" href="styleMain.css">
-    <link rel="stylesheet" href="account.css">
-    <link rel="icon" type="image/x-icon" href="satellite.svg">
-</head>
-<body>
+    <link rel="stylesheet" href="styleMain.css" />
+    <link rel="stylesheet" href="account.css" />
+    <link rel="icon" type="image/x-icon" href="satellite.svg" />
+  </head>
+  <body>
     <div class="nav-bar">
-        <a class="nav-bar-home" href="index.html">
-            <img src="satellite.svg" />
-        </a>
-        <a href="missions.html">Explore Missions</a>
-        <a href="postMission.html">Post Your Mission</a>
+      <a class="nav-bar-home" href="index.html">
+        <img src="satellite.svg" />
+      </a>
+      <a href="missions.html">Explore Missions</a>
+      <a href="postMission.html">Post Your Mission</a>
     </div>
+
     <div id="account-info">
-        <p style="margin-top: 80px;">Your account info</p>
-        <div id="user-missions-container">
-            <!-- Missions will be rendered here -->
-        </div>
+      <p style="margin-top: 80px">Your account info</p>
+      <div id="user-missions-container">
+        <!-- Missions will be rendered here -->
+      </div>
     </div>
-</body>
-    <template id="mission-card-template">
-        <a href="#" class="mission-card-link">
-            <div class="mission-card">
-                <h2 class="mission-title"></h2>
-                <p class="mission-description"></p>
-                <p class="mission-status"></p>
-                <div class="mission-progress-area">
-                    <div class="mission-progress-bar-container">
-                        <div
-                            class="mission-progress-bar-fill"
-                            style="width: 0%"
-                        ></div>
-                        <span class="mission-progress-text"></span>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </template>
-    <script src="AccountPage.js"></script>
+  </body>
+  <template id="mission-card-template">
+    <a href="#" class="mission-card-link">
+      <div class="mission-card">
+        <h2 class="mission-title"></h2>
+        <p class="mission-description"></p>
+        <p class="mission-status"></p>
+
+        <!-- Countdown Clock within EACH mission card -->
+        <div class="mission-countdown-container">
+          <p class="countdown-label">Time Remaining:</p>
+          <div class="mission-countdown-timer" data-mission-id="">
+            <!-- Data attribute to hold mission ID for JS -->
+            <span class="days">00</span><span class="label">D</span>
+            <span class="hours">00</span><span class="label">H</span>
+            <span class="minutes">00</span><span class="label">M</span>
+            <span class="seconds">00</span><span class="label">S</span>
+          </div>
+          <p class="mission-launch-message"></p>
+        </div>
+        <!-- End Countdown Clock -->
+
+        <div class="mission-progress-area">
+          <div class="mission-progress-bar-container">
+            <div class="mission-progress-bar-fill" style="width: 0%"></div>
+            <span class="mission-progress-text"></span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </template>
+  <script src="AccountPage.js"></script>
 </html>

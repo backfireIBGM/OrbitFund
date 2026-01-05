@@ -16,3 +16,52 @@
     outline-color: #0266a0;
     margin-top: 100px;
 }
+
+.mission-countdown-container {
+  margin-top: 15px; /* Spacing below other mission details */
+  padding: 10px;
+  background-color: rgba(
+    0,
+    0,
+0,
+    0.3
+  ); /* Slightly darker background within the card */
+  border-radius: 5px;
+  text-align: center;
+}
+
+.mission-countdown-container p {
+  margin: 0 0 5px 0;
+  font-size: 0.9em;
+  color: #aaffaa; /* Light green for the "Launch in" text */
+}
+
+.mission-countdown-timer {
+  font-size: 1.5em; /* Smaller font size for individual cards */
+  font-weight: bold;
+  color: #ffcc00; /* Yellow/orange for the timer numbers */
+  text-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  gap: 5px; /* Space between time units */
+}
+
+.mission-countdown-timer span {
+  display: inline-block;
+  min-width: 35px; /* Adjust width for digits */
+  text-align: center;
+  color: #ffcc00; /* Ensure color applies */
+}
+
+.mission-countdown-timer .label {
+  font-size: 0.7em; /* Label for D, H, M, S */
+  color: #cccccc;
+  font-weight: normal;
+}
+
+.mission-launch-message {
+  margin-top: 10px;
+  font-size: 1em;
+  color: #39ff14; /* Neon green for launch message */
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+}
