@@ -43,7 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("You must be logged in to launch a mission. Redirecting to login page.");
         window.location.replace("loginSignup.html?form=login");
     }
+
+    updateAuthUINarBar();
 });
+
+// --- Function to update the navigation bar login/username display ---
+function updateAuthUINarBar() {
+    const authLink = document.querySelector('a[href="loginSignup.html"]');
+
+    if (!authLink) {
+        console.error("Authentication link not found in the navigation bar.");
+        return;
+    }
+
+    const token = localStorage.getItem("orbitFundToken");
+    const username = localStorage.getItem("orbitFundUsername");
+
+    if (token && username) {
+        authLink.textContent = username;
+        authLink.href = "accountPage.html";
+    } else {
+        authLink.textContent = "Login";
+        authLink.href = "loginSignup.html";
+    }
+}
 
 // --- FUNCTION TO SHOW SPECIFIC STEP ---
 function showStep(stepNumber) {
