@@ -5,18 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OrbitFund | Account Name</title>
     <link rel="stylesheet" href="styleMain.css">
+    <link rel="stylesheet" href="account.css">
     <link rel="icon" type="image/x-icon" href="satellite.svg">
 </head>
-    <body>
-        <div class="nav-bar">
-            <a class="nav-bar-home" href="index.html">
-                <img src="satellite.svg" />
-            </a>
-            <a href="missions.html">Explore Missions</a>
-            <a href="postMission.html">Post Your Mission</a>
+<body>
+    <div class="nav-bar">
+        <a class="nav-bar-home" href="index.html">
+            <img src="satellite.svg" />
+        </a>
+        <a href="missions.html">Explore Missions</a>
+        <a href="postMission.html">Post Your Mission</a>
+    </div>
+    <div id="account-info">
+        <p style="margin-top: 80px;">Your account info</p>
+        <div id="user-missions-container">
+            <!-- Missions will be rendered here -->
         </div>
-        <div>
-            <p style="margin-top: 80px;">Your account info</p>
-        </div>
-    </body>
+    </div>
+</body>
+    <template id="mission-card-template">
+        <a href="#" class="mission-card-link">
+            <div class="mission-card">
+                <h2 class="mission-title"></h2>
+                <p class="mission-description"></p>
+                <p class="mission-status"></p>
+                <div class="mission-progress-area">
+                    <div class="mission-progress-bar-container">
+                        <div
+                            class="mission-progress-bar-fill"
+                            style="width: 0%"
+                        ></div>
+                        <span class="mission-progress-text"></span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </template>
+    <script src="AccountPage.js"></script>
 </html>

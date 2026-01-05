@@ -1,0 +1,18 @@
+#user-missions-container {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mission-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+
+    /* Outline styles */
+    outline-width: 5px;
+    outline-style: solid;
+    outline-color: #0266a0;
+    margin-top: 100px;
+}
