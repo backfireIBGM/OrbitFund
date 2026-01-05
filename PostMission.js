@@ -18,6 +18,10 @@ const missionImagesPreview = document.getElementById('missionImagesPreview');
 const missionVideoPreview = document.getElementById('missionVideoPreview');
 const techDocsPreview = document.getElementById('techDocsPreview');
 
+// Specific date inputs
+const launchDateInput = document.getElementById('launchDate');
+const endTimeInput = document.getElementById('endTime'); // Now directly from user input
+
 
 // --- WIZARD STATE ---
 let currentStep = 1;
@@ -76,6 +80,26 @@ function validateCurrentStep() {
     let isValid = true;
 
     for (const input of inputs) {
+        // Validation for launchDate and endTime relationship
+        if (input.id === 'launchDate' || input.id === 'endTime') {
+            const launchDateVal = launchDateInput.value;
+            const endTimeVal = endTimeInput.value;
+
+            // Only validate if both have values
+            if (launchDateVal && endTimeVal) {
+                const startDate = new Date(launchDateVal);
+                const endDate = new Date(endTimeVal);
+
+                if (endDate <= startDate) {
+                    isValid = false;
+                    alert("Campaign End Date must be after Target Launch Date.");
+                    endTimeInput.reportValidity();
+                    endTimeInput.focus();
+                    return false;
+                }
+            }
+        }
+
         if (input.hasAttribute('required') && !input.value.trim()) {
             isValid = false;
             input.reportValidity();
@@ -207,8 +231,8 @@ async function handleSubmit(event) {
         return;
     }
 
-    // --- NEW: Manually create FormData and append all collected files ---
-    const formData = new FormData(missionForm); // Collects all non-file inputs
+    // --- Manually create FormData and append all collected files ---
+    const formData = new FormData(missionForm); // Collects all non-file inputs including launchDate, endTime
 
     // Append collected files from our Sets
     for (const fileInputName in collectedFiles) {
@@ -236,7 +260,6 @@ async function handleSubmit(event) {
             headers: {
                 // IMPORTANT: Do NOT set Content-Type for FormData when uploading files.
                 // The browser sets it automatically, including the boundary.
-                // 'Content-Type': 'multipart/form-data' // <-- REMOVE THIS LINE IF YOU HAVE IT
                 'Authorization': `Bearer ${token}`
             },
             body: formData, // FormData object handles its own content type
@@ -355,6 +378,3 @@ const removeLastMilestone = () => {
 // Event listeners for the buttons
 incrementMilestoneBtn.addEventListener('click', addMilestone);
 decrementMilestoneBtn.addEventListener('click', removeLastMilestone);
-
-// Initialize with one milestone if desired, or keep at 0
-// addMilestone();

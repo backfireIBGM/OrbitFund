@@ -31,13 +31,13 @@
         </div>
 
         <form class="mission-form" id="missionForm" method="post" enctype="multipart/form-data">
-            
+
             <!-- Mission Details Section (initially active) -->
             <div class="form-section active" id="section1">
                 <h2>Mission Details</h2>
-                <div class="form-group"><label for="missionTitle">Mission Title</label><input type="text" id="missionTitle" name="title" placeholder="e.g., Earth Climate Monitor CubeSat"></div>
-                <div class="form-group"><label for="missionDescription">Mission Description</label><textarea id="missionDescription" name="description" rows="4" placeholder="Describe your mission in detail. What will your CubeSat do?"></textarea></div>
-                <div class="form-group"><label for="missionGoals">Mission Goals & Objectives</label><textarea id="missionGoals" name="goals" rows="3" placeholder="List your specific mission objectives and expected outcomes..."></textarea></div>
+                <div class="form-group"><label for="missionTitle">Mission Title</label><input type="text" id="missionTitle" name="title" placeholder="e.g., Earth Climate Monitor CubeSat" required></div>
+                <div class="form-group"><label for="missionDescription">Mission Description</label><textarea id="missionDescription" name="description" rows="4" placeholder="Describe your mission in detail. What will your CubeSat do?" required></textarea></div>
+                <div class="form-group"><label for="missionGoals">Mission Goals & Objectives</label><textarea id="missionGoals" name="goals" rows="3" placeholder="List your specific mission objectives and expected outcomes..." required></textarea></div>
                 <div class="form-group">
                 <label>Milestones</label>
                 <div id="milestoneCounter" style="display: flex; align-items: center;">
@@ -51,7 +51,7 @@
                 <div class="form-row">
                 <div class="form-group">
                     <label for="missionType">Mission Type</label>
-                    <select id="missionType" name="type">
+                    <select id="missionType" name="type" required>
                         <option value="" disabled selected hidden>Select a mission type</option>
                         <option value="earth-observation">Earth Observation</option>
                         <option value="communications">Communications</option>
@@ -61,9 +61,9 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
-                    <div class="form-group"><label for="launchDate">Target Launch Date</label><input type="date" id="launchDate" name="launchDate"></div>
+                    <div class="form-group"><label for="launchDate">Target Launch Date</label><input type="date" id="launchDate" name="launchDate" required></div>
                 </div>
-                <div class="form-group"><label for="teamInfo">Team Information</label><textarea id="teamInfo" name="teamInfo" rows="3" placeholder="Tell us about your team, qualifications, and experience..."></textarea></div>
+                <div class="form-group"><label for="teamInfo">Team Information</label><textarea id="teamInfo" name="teamInfo" rows="3" placeholder="Tell us about your team, qualifications, and experience..." required></textarea></div>
             </div>
 
             <!-- Media Section -->
@@ -114,19 +114,20 @@
             <div class="form-section" id="section3">
                 <h2>Funding & Timeline</h2>
                 <div class="form-row">
-                    <div class="form-group"><label for="fundingGoal">Funding Goal ($)</label><input type="number" id="fundingGoal" name="fundingGoal" min="1000" placeholder="50000"><small>Minimum $1,000 </small></div>
-                    <div class="form-group"><label for="duration">Campaign Duration (days)</label><input type="number" id="duration" name="duration" min="1" max="120" placeholder="60"><small>Maximum 120 days</small></div>
+                    <div class="form-group"><label for="fundingGoal">Funding Goal ($)</label><input type="number" id="fundingGoal" name="fundingGoal" min="1000" placeholder="50000" required><small>Minimum $1,000 </small></div>
+                    <!-- REPLACED duration with endTime -->
+                    <div class="form-group"><label for="endTime">Campaign End Date</label><input type="date" id="endTime" name="endTime" required></div>
                 </div>
-                <div class="form-group"><label for="budgetBreakdown">Budget Breakdown</label><textarea id="budgetBreakdown" name="budgetBreakdown" rows="4" placeholder="Provide a detailed breakdown of how funds will be used:&#10;- CubeSat components: $25,000&#10;- Launch services: $15,000&#10;- Ground station: $10,000&#10;- etc."></textarea></div>
-                <div class="form-group"><label for="rewards">Backer Rewards</label><textarea id="rewards" name="rewards" rows="3" placeholder="Describe rewards for different funding levels:&#10;$25 - Mission updates and photos&#10;$100 - Signed mission patch&#10;$500 - Name on the satellite&#10;etc."></textarea></div>
+                <div class="form-group"><label for="budgetBreakdown">Budget Breakdown</label><textarea id="budgetBreakdown" name="budgetBreakdown" rows="4" placeholder="Provide a detailed breakdown of how funds will be used:&#10;- CubeSat components: $25,000&#10;- Launch services: $15,000&#10;- Ground station: $10,000&#10;- etc." required></textarea></div>
+                <div class="form-group"><label for="rewards">Backer Rewards</label><textarea id="rewards" name="rewards" rows="3" placeholder="Describe rewards for different funding levels:&#10;$25 - Mission updates and photos&#10;$100 - Signed mission patch&#10;$500 - Name on the satellite&#10;etc." required></textarea></div>
             </div>
 
             <!-- Review Section -->
             <div class="form-section" id="section4">
                 <h2>Review & Launch</h2>
                 <p style="margin-bottom: 2rem; color: #b0b0b0;">Please review all information before submitting your mission. Once submitted, your mission will be reviewed by our team before going live.</p>
-                <div class="form-group"><label><input type="checkbox" id="termsAgree" style="width: auto; margin-right: 0.5rem;">I agree to the Terms of Service and Privacy Policy</label></div>
-                <div class="form-group"><label><input type="checkbox" id="accuracyConfirm" style="width: auto; margin-right: 0.5rem;">I confirm that all information provided is accurate</label></div>
+                <div class="form-group"><label><input type="checkbox" id="termsAgree" style="width: auto; margin-right: 0.5rem;" required>I agree to the Terms of Service and Privacy Policy</label></div>
+                <div class="form-group"><label><input type="checkbox" id="accuracyConfirm" style="width: auto; margin-right: 0.5rem;" required>I confirm that all information provided is accurate</label></div>
             </div>
 
             <!-- Navigation Buttons -->
