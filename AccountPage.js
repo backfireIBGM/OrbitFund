@@ -113,6 +113,8 @@ async function loadUserMissions() {
           const missionLink = clone.querySelector('.mission-card-link');
           const missionTitle = clone.querySelector('.mission-title');
           const missionStatus = clone.querySelector('.mission-status');
+          const missionCurrentFunding = clone.querySelector('.mission-current-funding');
+          const missionFundingGoal = clone.querySelector('.mission-funding-goal');
 
           const missionProgressBarFillElem = clone.querySelector(
             '.mission-progress-bar-fill',
@@ -139,6 +141,12 @@ async function loadUserMissions() {
           } else if (statusText === 'Rejected') {
             missionStatus.style.color = 'red';
           }
+
+        const currentFunding = mission.currentFunding;
+        missionCurrentFunding.textContent = `Current Funding: $${currentFunding}`;
+
+        const fundingGoal = mission.fundingGoal;
+        missionFundingGoal.textContent = `Funding Goal: $${fundingGoal}`;
 
           let fundingPercentage = 0;
           if (mission.fundingGoal > 0) {
