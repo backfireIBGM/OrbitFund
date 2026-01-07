@@ -207,6 +207,11 @@ async function loadUserMissions() {
 
 // Ensure the DOM is fully loaded before trying to access and manipulate elements
 document.addEventListener('DOMContentLoaded', () => {
+  const username = localStorage.getItem('orbitFundUsername');
+  if (username) {
+    document.title = `OrbitFund | ${username}`;
+  }
+
   loadUserMissions();
 });
 
