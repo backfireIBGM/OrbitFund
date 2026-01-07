@@ -20,7 +20,7 @@ const techDocsPreview = document.getElementById('techDocsPreview');
 
 // Specific date inputs
 const launchDateInput = document.getElementById('launchDate');
-const endTimeInput = document.getElementById('endTime'); // Now directly from user input
+const endTimeInput = document.getElementById('endTime');
 
 
 // --- WIZARD STATE ---
