@@ -1,3 +1,8 @@
+#account-info-top-of-page {
+  padding-top: 10px;
+  font-size: 50px;
+}
+
 #user-missions-container {
     width: 90%;
     margin-left: auto;
@@ -5,17 +10,31 @@
 }
 
 .mission-card-link {
-    text-align: center;
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    width: 100%;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
 
-    /* Outline styles */
-    outline-width: 5px;
-    outline-style: solid;
-    outline-color: #0266a0;
-    margin-top: 100px;
+  /* Outline styles */
+  outline-width: 5px;
+  outline-style: solid;
+  outline-color: black; /* Changed to black by default */
+  margin-top: 100px;
+  padding-bottom: 10px;
+
+  /* Add a smooth transition for the outline color */
+  transition: outline-color 0.3s ease-in-out;
+}
+
+.mission-card-link:hover,
+.mission-card-link:focus {
+  outline-color: #0266a0; /* Changed to blue on hover AND focus */
+}
+
+.mission-progress-bar-container {
+  margin-left: 2.5%;
+  width: 95%;
 }
 
 .mission-countdown-container {
@@ -41,7 +60,10 @@
 .mission-countdown-timer span {
   display: inline-block;
   min-width: 35px;
-  text-align: center;
+}
+
+.countdown-label {
+  font-weight: normal;
 }
 
 .mission-launch-message {

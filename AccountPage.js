@@ -114,7 +114,6 @@ async function loadUserMissions() {
           const missionTitle = clone.querySelector('.mission-title');
           const missionStatus = clone.querySelector('.mission-status');
           const missionCurrentFunding = clone.querySelector('.mission-current-funding');
-          const missionFundingGoal = clone.querySelector('.mission-funding-goal');
 
           const missionProgressBarFillElem = clone.querySelector(
             '.mission-progress-bar-fill',
@@ -143,10 +142,8 @@ async function loadUserMissions() {
           }
 
         const currentFunding = mission.currentFunding;
-        missionCurrentFunding.textContent = `Current Funding: $${currentFunding}`;
-
         const fundingGoal = mission.fundingGoal;
-        missionFundingGoal.textContent = `Funding Goal: $${fundingGoal}`;
+        missionCurrentFunding.textContent = `$${currentFunding} raised of $${fundingGoal}`;
 
           let fundingPercentage = 0;
           if (mission.fundingGoal > 0) {
@@ -208,8 +205,10 @@ async function loadUserMissions() {
 // Ensure the DOM is fully loaded before trying to access and manipulate elements
 document.addEventListener('DOMContentLoaded', () => {
   const username = localStorage.getItem('orbitFundUsername');
+  const accountInfo = document.getElementById('account-info-top-of-page');
   if (username) {
     document.title = `OrbitFund | ${username}`;
+    accountInfo.textContent = `${username} Account Info`;
   }
 
   loadUserMissions();
