@@ -10,7 +10,6 @@
 }
 
 .mission-card-link {
-  text-align: center;
   display: block;
   text-decoration: none;
   color: inherit;
@@ -53,12 +52,12 @@
   font-weight: bold;
   color: #ffffff;
   display: flex;
-  justify-content: center;
   gap: 5px;
 }
 
 .mission-countdown-timer span {
   display: inline-block;
+  text-align: right;
   min-width: 35px;
 }
 

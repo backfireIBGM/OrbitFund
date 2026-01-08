@@ -113,9 +113,10 @@ function validateCurrentStep() {
                 const startDate = new Date(launchDateVal);
                 const endDate = new Date(endTimeVal);
 
-                if (endDate <= startDate) {
+                // If endDate is NOT before startDate (i.e., endDate >= startDate)
+                if (endDate >= startDate) {
                     isValid = false;
-                    alert("Campaign End Date must be after Target Launch Date.");
+                    alert("Campaign End Date must be before Target Launch Date.");
                     endTimeInput.reportValidity();
                     endTimeInput.focus();
                     return false;
