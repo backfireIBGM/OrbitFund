@@ -15,6 +15,7 @@
       </a>
       <a href="missions.html">Explore Missions</a>
       <a href="postMission.html">Post Your Mission</a>
+      <a href="#" class="btn-nav" onclick="logout()">Logout</a>
     </div>
 
     <div id="account-info">
@@ -28,23 +29,23 @@
     <a href="#" class="mission-card-link">
       <div class="mission-card">
         <h2 class="mission-title"></h2>
-        <p class="mission-status"></p>
-        <p class="mission-current-funding"></p>
-
-        <!-- Countdown Clock within EACH mission card -->
-        <div class="mission-countdown-container">
-          <p class="countdown-label">Time Remaining:</p>
-          <div class="mission-countdown-timer" data-mission-id="">
-            <!-- Data attribute to hold mission ID for JS -->
-            <span class="days">00</span>:
-            <span class="hours">00</span>:
-            <span class="minutes">00</span>:
-            <span class="seconds">00</span>
+        <div class="mission-metrics">
+          <div class="mission-countdown-container">
+            <p class="countdown-label">Time Remaining:</p>
+            <div class="mission-countdown-timer" data-mission-id="">
+              <span class="days">00</span>:
+              <span class="hours">00</span>:
+              <span class="minutes">00</span>:
+              <span class="seconds">00</span>
+            </div>
           </div>
+          <div id="status-monitor">
+            <p class="mission-status"></p>
+            <p class="mission-current-funding"></p>
+          </div>
+        </div>
           <p class="mission-launch-message"></p>
         </div>
-        <!-- End Countdown Clock -->
-
         <div class="mission-progress-area">
           <div class="mission-progress-bar-container">
             <div class="mission-progress-bar-fill" style="width: 0%"></div>
@@ -55,4 +56,5 @@
     </a>
   </template>
   <script src="AccountPage.js"></script>
+  <script src="AuthUI.js"></script>
 </html>
