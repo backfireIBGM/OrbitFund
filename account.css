@@ -88,3 +88,26 @@
   margin-top: 10px;
   font-size: 1em;
 }
+
+.buttons {
+  text-align: center;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.buttons button {
+  display: inline-block;
+  padding: 20px 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 40px;
+  /* Shorthand: width | style | color (optional here) */
+  outline: 5px solid transparent; 
+  transition: outline-color 0.2s ease; /* Smooth transition */
+}
+
+/* Target the button, not the container */
+.buttons button:hover,
+.buttons button:focus {
+  outline-color: #0266a0;
+}
