@@ -36,8 +36,27 @@
   width: 95%;
 }
 
+.mission-title {
+  padding-left: 10px;
+  padding-right : 10px;
+  text-align: center;
+}
+
+.mission-metrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 10px;
+  padding-right : 10px;
+}
+
 .mission-countdown-container {
   display: inline-block; /* Makes the width shrink to fit its content */
+  text-align: center;
+}
+
+#status-monitor {
+  display: inline-block;
   text-align: center;
 }
 

@@ -43,27 +43,26 @@ function updateAuthUINarBar() {
 }
 
 function logout() {
-    localStorage.removeItem('orbitFundToken'); // Clear the JWT
-    localStorage.removeItem('orbitFundUsername'); // Clear the username
-    alert('You have been logged out.');
+  localStorage.removeItem("orbitFundToken");
+  localStorage.removeItem("orbitFundUsername");
 
-    // Directly call the update function if on the homepage
-    // No need for DOMContentLoaded as the page is already loaded
-    const currentPage = window.location.pathname.split('/').pop();
-    if (currentPage === 'index.html' || currentPage === '') { // Added '' for root path
-      updateAuthUIHomePage();
-    }
-    // If on other pages, consider redirecting or updating other UI elements if necessary
-    // For now, we only care about the home page UI based on your problem description.
+  const path = window.location.pathname;
+  const currentPage = path.split("/").pop() || "index.html";
+
+  if (currentPage === "index.html" || currentPage === "") {
+    updateAuthUIHomePage();
+  } else if (currentPage === "accountPage.html") {
+    window.location.href = "index.html";
+  }
 }
 
 // --- Initialize UI on Page Load ---
 document.addEventListener('DOMContentLoaded', () => {
 const currentPage = window.location.pathname.split('/').pop();
 
-if (currentPage === 'index.html') {
-  updateAuthUIHomePage(); // Call this when the page loads to set the initial state
-} else {
+if (currentPage === "index.html") {
+  updateAuthUIHomePage();
+} else if (currentPage !== "accountPage.html") {
   updateAuthUINarBar();
 }
 });
