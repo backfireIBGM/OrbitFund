@@ -71,7 +71,6 @@ function startMissionCountdown(missionId, targetTimeString) {
   });
 }
 
-// Function to load user missions
 async function loadUserMissions() {
   const token = localStorage.getItem(TOKEN_KEY);
   const userMissionsContainer = document.getElementById(
@@ -89,7 +88,7 @@ async function loadUserMissions() {
 
   if (!userMissionsContainer || !missionCardTemplate) {
     console.error(
-      'AccountPage: Required DOM elements (user-missions-container or mission-card-template) not found.',
+      'AccountPage: Required DOM elements not found.',
     );
     return;
   }
@@ -114,6 +113,7 @@ async function loadUserMissions() {
           const missionTitle = clone.querySelector('.mission-title');
           const missionStatus = clone.querySelector('.mission-status');
           const missionCurrentFunding = clone.querySelector('.mission-current-funding');
+          const pauseBtn = clone.querySelector('#pause');
 
           const missionProgressBarFillElem = clone.querySelector(
             '.mission-progress-bar-fill',
@@ -125,33 +125,54 @@ async function loadUserMissions() {
           const missionCountdownTimerDiv = clone.querySelector(
             '.mission-countdown-timer',
           );
-          // Set a unique identifier for the countdown timer div
+          
           missionCountdownTimerDiv.setAttribute('data-mission-id', mission.Id);
-
           missionLink.href = `singleMission.html?id=${mission.Id}`;
           missionTitle.textContent = mission.title || 'Untitled Mission';
-          const statusText = mission.Status || 'Unknown';
-          missionStatus.textContent = `Status: ${statusText}`;
 
-          if (statusText === 'Approved') {
-            missionStatus.style.color = 'green';
-          } else if (statusText === 'Pending') {
-            missionStatus.style.color = 'orange';
-          } else if (statusText === 'Rejected') {
-            missionStatus.style.color = 'red';
+          // Status Logic
+          const userSetPostStatus = mission.user_approved;
+          const adminSetPostStatus = mission.admin_approved;
+          let statusText;
+
+          if (userSetPostStatus && adminSetPostStatus) {
+            statusText = "Approved";
+          } else if (userSetPostStatus && !adminSetPostStatus) {
+            statusText = "Waiting for admin to approve.";
+          } else if (!userSetPostStatus && adminSetPostStatus) {
+            statusText = "Waiting for you to approve.";
+          } else {
+            statusText = "Mission not yet approved by admin or you";
           }
 
-        const currentFunding = mission.currentFunding;
-        const fundingGoal = mission.fundingGoal;
-        missionCurrentFunding.textContent = `$${currentFunding} raised of $${fundingGoal}`;
+          missionStatus.textContent = `Status: ${statusText}`;
+
+          // Button and Status Styling
+          if (statusText === 'Approved') {
+            missionStatus.style.color = 'green';
+          } else if (statusText === 'Waiting for admin to approve.' || statusText === 'Waiting for you to approve.') {
+            missionStatus.style.color = 'orange';
+          }
+
+          // Set Button Text based on state
+          if (pauseBtn) {
+            pauseBtn.textContent = mission.user_approved ? 'PAUSE' : 'RESUME';
+            pauseBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation(); // Prevents navigating to singleMission.html
+              toggleMissionApproval(mission.Id);
+            });
+          }
+
+          // Funding Logic
+          const currentFunding = mission.currentFunding;
+          const fundingGoal = mission.fundingGoal;
+          missionCurrentFunding.textContent = `$${currentFunding} raised of $${fundingGoal}`;
 
           let fundingPercentage = 0;
           if (mission.fundingGoal > 0) {
-            fundingPercentage =
-              (mission.currentFunding / mission.fundingGoal) * 100;
-            if (fundingPercentage > 100) {
-              fundingPercentage = 100;
-            }
+            fundingPercentage = (mission.currentFunding / mission.fundingGoal) * 100;
+            if (fundingPercentage > 100) fundingPercentage = 100;
           }
           const formattedPercentage = fundingPercentage.toFixed(1);
 
@@ -164,21 +185,18 @@ async function loadUserMissions() {
 
           userMissionsContainer.appendChild(clone);
 
-          // Only start countdown if mission.endTime is a valid (non-null) string
           if (mission.endTime) {
             startMissionCountdown(mission.Id, mission.endTime);
           } else {
-            // If no endTime, display a message indicating no deadline
             const countdownContainer = missionCountdownTimerDiv.closest(
               '.mission-countdown-container',
             );
             if (countdownContainer) {
-              const messageElem =
-                countdownContainer.querySelector('.mission-launch-message');
+              const messageElem = countdownContainer.querySelector('.mission-launch-message');
               const labelElem = countdownContainer.querySelector('.countdown-label');
               if (messageElem) messageElem.textContent = 'No deadline set.';
-              if (labelElem) labelElem.style.display = 'none'; // Hide the "Time Remaining:" label
-              missionCountdownTimerDiv.style.display = 'none'; // Hide the timer itself
+              if (labelElem) labelElem.style.display = 'none';
+              missionCountdownTimerDiv.style.display = 'none';
             }
           }
         });
@@ -187,14 +205,7 @@ async function loadUserMissions() {
       }
     } else {
       const errorJson = await response.json();
-      console.error(
-        'User Missions JSON (error) - Status:',
-        response.status,
-        errorJson,
-      );
-      userMissionsContainer.textContent = `Failed to load missions: ${
-        errorJson.message || 'Unknown error.'
-      }`;
+      userMissionsContainer.textContent = `Failed to load missions: ${errorJson.message || 'Unknown error.'}`;
     }
   } catch (error) {
     console.error('User Missions JSON (network error):', error);
@@ -222,3 +233,57 @@ window.addEventListener('beforeunload', () => {
     clearInterval(intervalId);
   }
 });
+
+async function toggleMissionApproval(missionId) {
+  const token = localStorage.getItem(TOKEN_KEY);
+  
+  try {
+    const response = await fetch(`${backendBaseUrl}/api/user-actions/toggle-approval/${missionId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      const timerElem = document.querySelector(`.mission-countdown-timer[data-mission-id="${missionId}"]`);
+      if (!timerElem) return;
+
+      const card = timerElem.closest('.mission-card');
+      const statusElem = card.querySelector('.mission-status');
+      const pauseBtn = card.querySelector('#pause'); 
+
+      const userApproved = data.user_approved;
+      const isPublic = data.is_public;
+      
+      // Update Status and Color
+      let statusText;
+      if (isPublic) {
+        statusText = "Approved";
+        statusElem.style.color = 'green';
+      } else if (userApproved) {
+        statusText = "Waiting for admin to approve.";
+        statusElem.style.color = 'orange';
+      } else {
+        statusText = "Waiting for you to approve.";
+        statusElem.style.color = 'orange';
+      }
+      statusElem.textContent = `Status: ${statusText}`;
+
+      // Update Button Word
+      if (pauseBtn) {
+        // If userApproved is true, the action should be to PAUSE
+        // If userApproved is false, the action should be to RESUME
+        pauseBtn.textContent = userApproved ? 'PAUSE' : 'RESUME';
+      }
+      
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to connect to server.');
+  }
+}

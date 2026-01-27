@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OrbitFund | Account Name</title>
+    <title>OrbitFund | Account</title>
     <link rel="stylesheet" href="styleMain.css" />
     <link rel="stylesheet" href="account.css" />
     <link rel="icon" type="image/x-icon" href="satellite.svg" />
@@ -25,41 +25,41 @@
       </div>
     </div>
   </body>
-  <template id="mission-card-template">
-    <a href="#" class="mission-card-link">
-      <div class="mission-card">
-        <h2 class="mission-title"></h2>
-        <div class="mission-metrics">
-          <div class="mission-countdown-container">
-            <p class="countdown-label">Time Remaining:</p>
-            <div class="mission-countdown-timer" data-mission-id="">
-              <span class="days">00</span>:
-              <span class="hours">00</span>:
-              <span class="minutes">00</span>:
-              <span class="seconds">00</span>
-            </div>
-          </div>
-          <div id="status-monitor">
-            <p class="mission-status"></p>
-            <p class="mission-current-funding"></p>
+<template id="mission-card-template">
+  <a href="#" class="mission-card-link">
+    <div class="mission-card">
+      <h2 class="mission-title"></h2>
+      <div class="mission-metrics">
+        <div class="mission-countdown-container">
+          <p class="countdown-label">Time Remaining:</p>
+          <div class="mission-countdown-timer" data-mission-id="">
+            <span class="days">00</span>:
+            <span class="hours">00</span>:
+            <span class="minutes">00</span>:
+            <span class="seconds">00</span>
           </div>
         </div>
-          <p class="mission-launch-message"></p>
-        </div>
-        <div class="mission-progress-area">
-          <div class="mission-progress-bar-container">
-            <div class="mission-progress-bar-fill" style="width: 0%"></div>
-            <span class="mission-progress-text"></span>
-          </div>
-        </div>
-        <div class="buttons">
-          <button id="edit">EDIT</button>
-          <button id="pause">PAUSE</button>
-          <button id="refund">REFUND</button>
+        <div id="status-monitor">
+          <p class="mission-status"></p>
+          <p class="mission-current-funding"></p>
         </div>
       </div>
-    </a>
-  </template>
+      <p class="mission-launch-message"></p>
+      <!-- REMOVED THE EXTRA </div> THAT WAS HERE -->
+      <div class="mission-progress-area">
+        <div class="mission-progress-bar-container">
+          <div class="mission-progress-bar-fill" style="width: 0%"></div>
+          <span class="mission-progress-text"></span>
+        </div>
+      </div>
+      <div class="buttons">
+        <button id="edit">EDIT</button>
+        <button id="pause">PAUSE</button>
+        <button id="refund">REFUND</button>
+      </div>
+    </div>
+  </a>
+</template>
   <script src="AccountPage.js"></script>
   <script src="AuthUI.js"></script>
 </html>
