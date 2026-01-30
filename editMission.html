@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrbitFund | Launch Your Mission</title>
+    <link rel="stylesheet" href="styleMain.css">
+    <link rel="stylesheet" href="stylePostMission.css">
+    <link rel="icon" type="image/x-icon" href="satellite.svg">
+</head>
+<body>
+        <div class="nav-bar">
+            <a class="nav-bar-home" href="index.html">
+                <img src="satellite.svg"/>
+            </a>
+            <a href="missions.html">Explore Missions</a>
+            <a href="loginSignup.html">Login</a>
+        </div>
+    <div class="container">
+        <div class="header">
+            <h1>Start Your Mission</h1>
+            <p>Launch your CubeSat project and connect with backers who share your vision for space exploration</p>
+        </div>
+
+        <div class="progress-steps">
+            <div class="step active" data-step="1"><span>Mission Details</span></div>
+            <div class="step" data-step="2"><span>Media & Files</span></div>
+            <div class="step" data-step="3"><span>Funding Goals</span></div>
+            <div class="step" data-step="4"><span>Review & Launch</span></div>
+        </div>
+
+        <form class="mission-form" id="missionForm" method="post" enctype="multipart/form-data">
+
+            <!-- Mission Details Section (initially active) -->
+            <div class="form-section active" id="section1">
+                <h2>Mission Details</h2>
+                <div class="form-group"><label for="missionTitle">Mission Title</label><input type="text" id="missionTitle" name="title" placeholder="e.g., Earth Climate Monitor CubeSat" required></div>
+                <div class="form-group"><label for="missionDescription">Mission Description</label><textarea id="missionDescription" name="description" rows="4" placeholder="Describe your mission in detail. What will your CubeSat do?" required></textarea></div>
+                <div class="form-group"><label for="missionGoals">Mission Goals & Objectives</label><textarea id="missionGoals" name="goals" rows="3" placeholder="List your specific mission objectives and expected outcomes..." required></textarea></div>
+                <div class="form-group">
+                    <label>Milestones</label>
+                    <div id="milestoneCounter" style="display: flex; align-items: center;">
+                        <button type="button" id="decrementMilestone">-</button>
+                        <span id="milestoneCount" style="margin: 0 10px;">0</span>
+                        <button type="button" id="incrementMilestone">+</button>
+                    </div>
+                    <div id="milestonesContainer">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="missionType">Mission Type</label>
+                    <select id="missionType" name="type" required>
+                        <option value="" disabled selected hidden>Select a mission type</option>
+                        <option value="earth-observation">Earth Observation</option>
+                        <option value="communications">Communications</option>
+                        <option value="scientific-research">Scientific Research</option>
+                        <option value="technology-demonstration">Technology Demonstration</option>
+                        <option value="educational">Educational</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="launchDate">Target Launch Date</label><input type="date" id="launchDate" name="launchDate" required></div>
+                </div>
+                <div class="form-group"><label for="teamInfo">Team Information</label><textarea id="teamInfo" name="teamInfo" rows="3" placeholder="Tell us about your team, qualifications, and experience..." required></textarea></div>
+            </div>
+
+            <!-- Media Section -->
+            <div class="form-section" id="section2">
+                <h2>Media & Documentation</h2>
+                <div class="form-group">
+                    <label>Mission Images</label>
+                    <div class="file-upload">
+                        <input type="file" id="missionImages" name="images" multiple accept="image/*">
+                        <label for="missionImages" class="file-upload-label">
+                            <span class="file-upload-icon">📷</span>
+                            <strong>Upload Images</strong>
+                            <small>Drag & drop images here or click to browse</small>
+                        </label>
+                    </div>
+                    <small>Upload images of your CubeSat design, team, prototypes, or mission concept</small>
+                    <div class="file-preview-area" id="missionImagesPreview"></div>
+                </div>
+                <div class="form-group">
+                    <label>Mission Video</label>
+                    <div class="file-upload">
+                        <input type="file" id="missionVideo" name="video" accept="video/*" multiple>
+                        <label for="missionVideo" class="file-upload-label">
+                            <span class="file-upload-icon">🎥</span>
+                            <strong>Upload Video</strong>
+                            <small>Drag & drop video here or click to browse</small>
+                        </label>
+                    </div>
+                    <small>A video explaining your mission can greatly increase backer engagement</small>
+                    <div class="file-preview-area" id="missionVideoPreview"></div>
+                </div>
+                <div class="form-group">
+                    <label>Technical Documentation</label>
+                    <div class="file-upload">
+                        <input type="file" id="techDocs" name="documents" multiple accept=".pdf,.doc,.docx">
+                        <label for="techDocs" class="file-upload-label">
+                            <span class="file-upload-icon">📄</span>
+                            <strong>Upload Documents</strong>
+                            <small>Drag & drop documents here or click to browse</small>
+                        </label>
+                    </div>
+                    <small>Technical specifications, mission plans, or other relevant documents</small>
+                    <div class="file-preview-area" id="techDocsPreview"></div>
+                </div>
+            </div>
+
+            <!-- Funding Section -->
+            <div class="form-section" id="section3">
+                <h2>Funding & Timeline</h2>
+                <div class="form-row">
+                    <div class="form-group"><label for="fundingGoal">Funding Goal ($)</label><input type="number" id="fundingGoal" name="fundingGoal" min="1000" placeholder="50000" required><small>Minimum $1,000 </small></div>
+                </div>
+                <div class="form-group"><label for="budgetBreakdown">Budget Breakdown</label><textarea id="budgetBreakdown" name="budgetBreakdown" rows="4" placeholder="Provide a detailed breakdown of how funds will be used:&#10;- CubeSat components: $25,000&#10;- Launch services: $15,000&#10;- Ground station: $10,000&#10;- etc." required></textarea></div>
+                <div class="form-group"><label for="rewards">Backer Rewards</label><textarea id="rewards" name="rewards" rows="3" placeholder="Describe rewards for different funding levels:&#10;$25 - Mission updates and photos&#10;$100 - Signed mission patch&#10;$500 - Name on the satellite&#10;etc." required></textarea></div>
+            </div>
+
+            <!-- Review Section -->
+            <div class="form-section" id="section4">
+                <h2>Review & Launch</h2>
+                <p style="margin-bottom: 2rem; color: #b0b0b0;">Please review all information before submitting your mission. Once submitted, your mission will be reviewed by our team before going live.</p>
+                <div class="form-group"><label><input type="checkbox" id="termsAgree" style="width: auto; margin-right: 0.5rem;" required>I agree to the Terms of Service and Privacy Policy</label></div>
+                <div class="form-group"><label><input type="checkbox" id="accuracyConfirm" style="width: auto; margin-right: 0.5rem;" required>I confirm that all information provided is accurate</label></div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation" style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Previous</button>
+                <button type="button" id="nextBtn" class="btn">Next</button>
+                <button type="submit" id="submitBtn" class="btn btn-large" style="display: none;">Launch Mission 🚀</button>
+            </div>
+        </form>
+    </div>
+    <script src="editMission.js"></script>
+</body>
+</html>

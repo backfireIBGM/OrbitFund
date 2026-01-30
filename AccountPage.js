@@ -114,6 +114,7 @@ async function loadUserMissions() {
           const missionStatus = clone.querySelector('.mission-status');
           const missionCurrentFunding = clone.querySelector('.mission-current-funding');
           const pauseBtn = clone.querySelector('#pause');
+          const editBtn = clone.querySelector('#edit');
 
           const missionProgressBarFillElem = clone.querySelector(
             '.mission-progress-bar-fill',
@@ -161,6 +162,15 @@ async function loadUserMissions() {
               e.preventDefault();
               e.stopPropagation(); // Prevents navigating to singleMission.html
               toggleMissionApproval(mission.Id);
+            });
+          }
+
+          // Edit Button Logic
+          if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+              e.preventDefault(); // Prevent triggering the mission card's anchor link
+              e.stopPropagation(); // Stop event bubbling
+              window.location.href = `editMission.html?id=${mission.Id}`;
             });
           }
 
