@@ -1,102 +1,133 @@
 /* --- Global Body / Page Styles --- */
+html,
 body {
-  background-color: #040027; /* Your dark background color */
-  color: #e0e0e0; /* Light gray for general text */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0; /* Set body margin to 0 */
-  padding: 0; /* Set body padding to 0 */
+  height: auto;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #040027;
+  color: #e0e0e0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h2 {
-  color: #0266a0; /* A bright, distinct blue color for titles */
-  font-weight: bold; /* Make the text bold as seen in the image */
-  font-size: 1.8em; /* Your desired fixed default size */
-  margin-top: 0;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
+.home-page,
+.login-signup-page {
+  background: linear-gradient(135deg, #0d0d1a 0%, #171733 50%, #22154d 100%);
+  display: flex;
+  flex-direction: column;
 }
 
-/* --- Nar Bar --- */
-.nav-bar {
-  background-color: #0266a0;
-  position: fixed;
-  width: 100%;
+/* --- Universal Navigation --- */
+.nav-bar,
+.nav-header {
+  position: fixed; /* Ensures it is always at the very top */
   top: 0;
   left: 0;
-  z-index: 99;
-
-  /* --- Flexbox for layout --- */
-  display: flex; /* Makes the nav-bar a flex container */
-  align-items: center; /* Vertically centers all direct children */
-  justify-content: center; /* Horizontally centers all direct children as a group */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  box-sizing: border-box;
+  z-index: 1000; /* Higher z-index to stay above all content */
+  min-height: 80px;
+  gap: 2rem; /* Spacing between text links */
 }
 
-.nav-bar .nav-bar-home img {
+/* Homepage and Login/Signup Specific Adjustments */
+.home-page .nav-header,
+.login-signup-page .nav-bar {
+  position: absolute; /* Overlays on top of the hero background */
+  justify-content: space-between;
+}
+
+/* Internal Pages Navigation (Blue bar) */
+body:not(.home-page):not(.login-signup-page) .nav-bar {
+  background-color: #0266a0;
+  position: sticky; /* Keeps it at top while scrolling */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Logo positioning for internal pages */
+body:not(.home-page):not(.login-signup-page) .nav-bar .nav-bar-home {
+  position: absolute;
+  left: 2rem;
+}
+
+.nav-bar .nav-bar-home img,
+.nav-header .logo img {
   height: 50px;
-  width: 50px;
+  width: auto;
+  display: block;
 }
 
-.nav-bar a {
+/* Link and Button Containers */
+.nav-bar a:not(.nav-bar-home),
+.nav-buttons,
+#loggedInUserDisplay,
+#authButtons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-bar a,
+.nav-header a {
   color: #ffffff;
-  margin: 0 15px; /* Adds horizontal margin between all links */
-}
-
-.nav-bar a:hover {
-  background-color: #014c7a;
-  border-radius: 5px;
-}
-
-a {
   text-decoration: none;
+  font-weight: 600;
 }
 
-/* --- Progress Bar Area --- */
+/* --- Content Spacing Fixes --- */
+/* This prevents the fixed/sticky navbar from covering the top of your content */
+.hero-container,
+.mission-details-container,
+.container,
+.missions,
+#account-info {
+  padding-top: 100px; /* Buffer: Navbar Height (80px) + 20px Gap */
+  box-sizing: border-box;
+}
+
+/* Centering the Login Box vertically */
+.login-signup-page {
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* --- Progress Bar Styles --- */
 .mission-progress-area {
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 15px; /* Adjusted spacing */
-    position: relative;
-    min-height: calc(
-        var(--bar-h, 25px) + var(--gap-bar-to-line, 5px) +
-            var(--line-h-level1) + /* Use the longest line height */
-            var(--text-h-approx) + /* Max text box height */
-            10px
-    );
-    overflow: visible;
+  width: 100%;
+  margin: 20px 0;
 }
 
-/* --- Progress Bar Container --- */
 .mission-progress-bar-container {
-    width: 100%;
-    background-color: #3a3a3a;
-    border-radius: 5px;
-    height: var(--bar-h, 25px); /* Height of the bar itself */
-    position: relative;
-    top: 0;
-    left: 0;
-    overflow: visible;
+  width: 100%;
+  background-color: #3a3a3a;
+  border-radius: 5px;
+  height: 25px;
+  position: relative;
+  overflow: hidden;
 }
 
 .mission-progress-bar-fill {
-    height: 100%;
-    background-color: #0266a0;
-    border-radius: 5px;
-    transition: width 0.5s ease-in-out;
-    position: absolute;
-    top: 0;
-    left: 0;
+  height: 100%;
+  background-color: #0266a0;
+  transition: width 0.5s ease;
 }
 
 .mission-progress-text {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.9em;
-    z-index: 1;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.7);
-    color: #ffffff;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9em;
+  z-index: 2;
+  text-shadow: 1px 1px 2px black;
+  color: white;
 }

@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // so it's accessible by functions defined later.
     // *** THESE VALUES ARE NOW RELATIVE TO THE VIEWPORT TOP ***
     const rowTopPositions = [
-        70,
-        380,
-        690
+        180,
+        490,
+        800
     ];
 
     // Define the hardcoded left positions based on the original index
