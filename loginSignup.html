@@ -9,8 +9,11 @@
     <link rel="icon" type="image/x-icon" href="satellite.svg">
 </head>
 <body class="login-signup-page">
-    <a href="index.html" class="nav-back">← Back to Home</a>
-
+    <div class="nav-bar">
+      <a class="nav-bar-home" href="index.html">
+        <img src="satellite.svg"/>
+      </a>
+    </div>
     <div class="auth-container">
         <div class="auth-toggle">
             <button id="showLoginBtn" class="toggle-btn active">Login</button>
@@ -19,7 +22,7 @@
 
         <!-- Login Form Section -->
         <div id="loginSection" class="auth-section active">
-            <h2>Welcome Back, Astronaut!</h2>
+            <h2>Welcome Back!</h3>
             <p>Log in to access your missions and funding opportunities.</p>
             <form id="loginForm" action="#" method="post">
                 <div class="form-group">
